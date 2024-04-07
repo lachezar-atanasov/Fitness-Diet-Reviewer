@@ -1,0 +1,59 @@
+﻿@using Fitness_Diet_Reviewer.ViewModels
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> Sign
+@inject UserManager<ApplicationUser> UserLog
+
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!-- Login.cshtml -->
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2 class="text-center">Login</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <section>
+            <form id="account" method="post">
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating mb-3">
+                    <input asp-for="UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter your username" />
+                    <label asp-for="UserName" class="form-label">Username</label>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="checkbox mb-3">
+                    <label asp-for="RememberMe" class="form-label">
+                        <input class="form-check-input" asp-for="RememberMe" />
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+                <div>
+                    @{
+                        if (ViewData["ReturnUrl"] != null && ViewData["ReturnUrl"] != String.Empty)
+
+                        {
+                            <input asp-for="ReturnUrl" type="hidden" value="@ViewData["ReturnUrl"]" />
+                        }
+                    }
+
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                </div>
+                <div>
+                    <p>
+                        <a asp-controller="Home" asp-action="Register">Register as a new user</a>
+                    </p>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

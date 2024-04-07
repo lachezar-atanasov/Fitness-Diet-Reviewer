@@ -1,0 +1,245 @@
+﻿@using Fitness_Diet_Reviewer.ViewModels
+@model PaginatedList<Fitness_Diet_Reviewer.Models.RequestedFood>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Requested Foods List";
+}
+
+<script>
+    function changePageSize(pageSize) {
+        window.location.href = '@Url.Action("Index")' +
+            '?sortOrder=' + '@ViewData["CurrentSort"]' +
+            '&pageNumber=1' +
+            '&currentFilter=' + '@ViewData["CurrentFilter"]' +
+            '&pageSize=' + pageSize;
+    }
+</script>
+
+<div class="d-flex flex-column" id="content-wrapper">
+    <div id="content">
+        <div class="container-fluid">
+            <h3 class="text-dark mb-4 text-center">Requested Foods List</h3>
+            <div class="card shadow">
+                <div class="card-header py-3">
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 text-nowrap">
+                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                <label class="form-label">
+                                    Show&nbsp;
+                                    <select class="d-inline-block form-select form-select-sm" onchange="changePageSize(this.value)">
+                                        <option value="10" selected="@(Model.PageSize == 10)">10</option>
+                                        <option value="25" selected="@(Model.PageSize == 25)">25</option>
+                                        <option value="50" selected="@(Model.PageSize == 50)">50</option>
+                                        <option value="100" selected="@(Model.PageSize == 100)">100</option>
+                                    </select>&nbsp;
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-end dataTables_filter" id="dataTable_filter">
+
+                                <form asp-action="RequestedFoods" method="get">
+                                    <label class="form-label">
+                                        <input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search" name="searchString" value="@ViewData["CurrentFilter"]">
+                                    </label>
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive table mt-2 w-75 text-center m-auto" role="grid" aria-describedby="dataTable_info">
+                        <table class="table my-0" id="dataTable" data-page-length="10">
+                            @{
+                                if (Model.Count() > 0)
+                                {
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["FoodNameSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Food Name</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["CarbohydratesSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Carbohydrates per 100g</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["FatsSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Fats per 100g</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["ProteinsSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Proteins per 100g</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["CaloriesSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Calories per 100g</a>
+                                            </th>
+                                            @{
+                                                if (User.IsInRole("Administrator") || User.IsInRole("Fitness Instructor"))
+                                                {
+                                                    <th>Username</th>
+                                                    <th>Operations</th>
+                                                }
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            foreach (var food in Model)
+                                            {
+                                                <tr>
+                                                    <td>@{
+                                                            if (User.IsInRole("Administrator"))
+                                                            {
+                                                                @food.FoodName
+                                                            }
+                                                            else
+                                                            {
+                                                            @food.FoodName    
+                                                            }
+                                                        }</td>
+                                                    <td>@food.Carbohydrates</td>
+                                                    <td>@food.Fats</td>
+                                                    <td>@food.Proteins</td>
+                                                    <td>
+                                                        @((food.Carbohydrates * 4) + (food.Fats * 9) + (food.Proteins * 4))
+                                                    </td>
+                                                    @{
+                                                        if (User.IsInRole("Administrator") || User.IsInRole("Fitness Instructor"))
+                                                        {
+                                                            <td>@UserManager.FindByIdAsync(food.UserId).Result.UserName</td>
+                                                            <td>
+                                                                <a asp-action="AddRequestedFood" asp-route-id="@food.FoodId"><i class="bi bi-plus-circle"></i></a>
+                                                                <a asp-action="RemoveRequestedFood" asp-route-id="@food.FoodId"><i class="bi bi-dash-circle"></i></a>
+                                                            </td>
+                                                        }
+                                                    }
+
+                                                </tr>
+                                            }
+
+                                        }
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["FoodNameSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Food Name</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["CarbohydratesSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Carbohydrates per 100g</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["FatsSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Fats per 100g</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["ProteinsSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Proteins per 100g</a>
+                                            </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["CaloriesSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Calories per 100g</a>
+                                            </th>
+                                            @{
+                                                if (User.IsInRole("Administrator") || User.IsInRole("Fitness Instructor"))
+                                                {
+                                                    <th>Username</th>
+                                                    <th>Operations</th>
+                                                }
+                                            }
+                                        </tr>
+                                    </tfoot>
+                                }
+                                else
+                                {
+                                    <p class="text-center">No requested foods yet</p>
+                                }
+                            }
+                                </table>
+                    </div>
+                    @if (Model.Any())
+                    {
+                        <div class="row">
+                            <div class="col-md-6 align-self-center">
+                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
+                                    Showing @((Model.PageIndex - 1) * Model.PageSize + 1)
+                                    to @{
+                                        if (decimal.Parse(ViewData["TotalCount"].ToString()) < ((@Model.PageIndex * @Model.PageSize) + 1))
+                                                        {
+                                            @ViewData["TotalCount"]
+                                        }
+                                        else
+                                        {
+                                            @((@Model.PageIndex * @Model.PageSize)+1)
+                                        }
+                                    }
+                                    of @(ViewData["TotalCount"])
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                    <ul class="pagination">
+                                        @{
+                                            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                                            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                                        }
+                                        <li class="page-item @prevDisabled">
+                                            <a asp-action="RequestedFoods"
+                                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                               asp-route-pageIndex="@(Model.PageIndex - 1)"
+                                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                               class="page-link"
+                                               aria-label="Previous">
+                                                <span aria-hidden="true">«</span>
+                                            </a>
+                                        </li>
+                                        @for (int i = 1; i <= Model.TotalPages; i++)
+                                        {
+                                            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                                   asp-route-pageIndex="@i"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                                   class="page-link">
+                                                    @i
+                                                </a>
+                                            </li>
+                                        }
+                                        <li class="page-item @nextDisabled">
+                                            <a asp-action="RequestedFoods"
+                                               asp-route-sortOrder="@ViewData["CurrentSort"]"
+                                               asp-route-pageIndex="@(Model.PageIndex + 1)"
+                                               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                               class="page-link"
+                                               aria-label="Next">
+                                                <span aria-hidden="true">»</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
