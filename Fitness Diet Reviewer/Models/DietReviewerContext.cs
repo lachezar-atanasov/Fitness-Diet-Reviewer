@@ -30,8 +30,8 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-       
-        optionsBuilder.UseSqlServer("Server=DESKTOP-095MVOE\\SQLEXPRESS; Database=database; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;");
+        string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
+        optionsBuilder.UseSqlServer(connectionString);
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
