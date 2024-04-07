@@ -1,0 +1,56 @@
+﻿table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) !important;
+    margin: 10px 0;
+    font-size: 0.7rem;
+}
+th, td {
+    padding: 15px;
+    text-align: center;
+}
+
+td {
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+}
+
+th {
+    user-select: none;
+    cursor: default;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    background-color: var(--bs-light); /* Header background color */
+}
+
+    th:hover {
+        background-color: #000000; /* Dark blue background on header hover */
+        color: white;
+        transition-duration: 0.5s;
+    }
+    th:hover div{
+        color:white;
+    }
+
+td:hover {
+    background-color: #cce5ff; /* Light blue background on cell hover */
+    cursor: pointer;
+    transition-duration: 1s;
+}
+
+    td:hover .addbutton {
+        opacity: 1;
+        transition: opacity 1s ease-out;
+    }
+        .addTd:hover{
+            background-color: #fff;
+        }
+
+.addbutton {
+    user-select: none;
+    opacity: 0;
+}
+
+.foodlink{
+    text-decoration:none;
+    color: #000;
+}

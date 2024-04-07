@@ -1,0 +1,96 @@
+﻿@using Fitness_Diet_Reviewer.ViewModels
+@model Fitness_Diet_Reviewer.Models.DailyMealRow
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="card">
+    <div class="card-body text-center p-sm-5">
+        <h2 class="font-weight-bold mb-3">Edit meal - @Model.DayOfWeek - @Model.EatTime</h2>
+        <div class="text-center">
+        <form class="w-50 m-auto align-content-center" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DailyMealRowId" />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+
+                    <label class="fw-bold control-label">Product name</label>
+                    @{
+                        if (ViewData["FoodName"] != null && ViewData["FoodId"] != null)
+                        {
+                            @ViewItems.CreateSearchBox("ProductId", "foodInput", "/Foods/Search", ViewData["FoodName"].ToString(), ViewData["FoodId"].ToString());
+                        }
+                        else
+                        {
+                            @ViewItems.CreateSearchBox("ProductId", "foodInput", "/Foods/Search");
+                        }
+                    }
+                        <span asp-validation-for="ProductId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+
+                    <label asp-for="AmountInGrams" class="fw-bold control-label">Quantity in Grams</label>
+                        <input asp-for="AmountInGrams" value="@String.Format("{0:0.##}", Model.AmountInGrams)" class="form-control text-center" placeholder="Amount in grams" />
+                        <span asp-validation-for="AmountInGrams" class="text-danger"></span>
+
+                    </div>
+                </div>
+            <div class="row">
+
+                <div class="col mb-3">
+                    <label asp-for="DayOfWeek" class="control-label text-center fw-bold @(ViewData["DayOfWeek"] != null ? "d-none" : "")">Day of week</label>
+                    <select asp-for="DayOfWeek" id="dayOfWeek" class="form-control text-center">
+                        <option value="" disabled>Select Day</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+
+                    <script>
+                        document.getElementById('dayOfWeek').value = '@Model.DayOfWeek';
+                    </script>
+                    <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col mb-3">
+                <label asp-for="EatTime" class="fw-bold control-label">Time for eating</label>
+                <input asp-for="EatTime" type="time" class="form-control text-center" id="timeInput" step="300" min="00:00" max="23:59">
+                <span asp-validation-for="EatTime" class="text-danger"></span>
+
+            </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-primary w-100" type="submit">Edit</button>
+                    </div>
+                    <div class="col-6">
+                        <a asp-action="Delete" asp-route-id="@Model.DailyMealRowId" class="btn btn-danger w-100">Delete</a>
+                    </div>
+                </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var timeInput = document.getElementById('timeInput');
+
+        // Attach timepicker using bootstrap-timepicker library
+        $(timeInput).timepicker({
+            showSeconds: false,
+            showMeridian: false,
+            defaultTime: false,
+            template: false,
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

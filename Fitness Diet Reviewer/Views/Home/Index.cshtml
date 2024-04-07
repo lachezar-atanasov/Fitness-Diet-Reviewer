@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4" style="padding-top: 2rem; padding-bottom:3rem;">Personal fitness diet with your favorite foods?</h1>
+    <p style="padding-bottom:4rem;">You are on the right place - here, you can create your own fitness diet that will be reviewed by top professional fitness instructors.</p>
+    
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            <a asp-action="ViewProfile" asp-controller="Accounts" asp-route-id="@User.Identity.Name">
+
+            <button class="btn btn-primary px-5 py-2" style="margin-bottom:8rem;" type="button">Get started</button>
+
+            </a>
+        }
+        else
+        {
+
+            <a asp-action="Login" asp-controller="Home">
+
+            <button class="btn btn-primary px-5 py-2" style="margin-bottom:8rem;" type="button">Get started</button>
+
+            </a>
+        }
+    } 
+    
+</div>

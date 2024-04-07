@@ -1,0 +1,47 @@
+﻿@using Fitness_Diet_Reviewer.ViewModels
+@model Fitness_Diet_Reviewer.Models.RequestedFood
+
+@{
+    ViewData["Title"] = "Add Requested Food";
+}
+<h1 class="text-center">Add Requested Food</h1>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-action="Add">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FoodId" />
+            <div class="form-group mb-3">
+                <label asp-for="FoodName" class="control-label"></label>
+                <input asp-for="FoodName" class="form-control" />
+                <span asp-validation-for="FoodName" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Proteins" class="control-label"></label>
+                <input asp-for="Proteins" class="form-control" />
+                <span asp-validation-for="Proteins" class="text-danger"></span>
+            </div>
+            <div class="form-group  mb-3">
+                <label asp-for="Carbohydrates" class="control-label"></label>
+                <input asp-for="Carbohydrates" class="form-control" />
+                <span asp-validation-for="Carbohydrates" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Fats" class="control-label"></label>
+                <input asp-for="Fats" class="form-control" />
+                <span asp-validation-for="Fats" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <button id="login-submit" type="submit" value="Save" class="w-100 btn btn-lg btn-primary">Add Requested Food</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
