@@ -12,7 +12,7 @@ void UpdateAppSetting(string key, string value)
     var updatedConfigJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
     File.WriteAllText("appsettings.json", updatedConfigJson);
 }
-string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
+string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database5; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
 var settingsUpdater = new AppSettingsUpdater();
 settingsUpdater.UpdateAppSetting("ConnectionStrings:DietAuditorContext", connectionString);
 
@@ -68,6 +68,13 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+// Seed data on application startup
+using (var serviceScope = app.Services.CreateScope())
+{
+    var dbContext = serviceScope.ServiceProvider.GetRequiredService<DietReviewerContext>();
+    dbContext.Database.Migrate();
 }
 
 
