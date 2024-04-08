@@ -30,7 +30,11 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database5; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
+        var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+        var connectionString = configuration.GetConnectionString("DietAuditorContext");
         optionsBuilder.UseSqlServer(connectionString);
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

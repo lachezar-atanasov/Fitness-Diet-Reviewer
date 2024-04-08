@@ -12,7 +12,7 @@ void UpdateAppSetting(string key, string value)
     var updatedConfigJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
     File.WriteAllText("appsettings.json", updatedConfigJson);
 }
-string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database5; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
+string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database10; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
 var settingsUpdater = new AppSettingsUpdater();
 settingsUpdater.UpdateAppSetting("ConnectionStrings:DietAuditorContext", connectionString);
 
