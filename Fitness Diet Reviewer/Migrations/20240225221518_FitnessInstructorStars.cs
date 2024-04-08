@@ -16,6 +16,7 @@ namespace Fitness_Diet_Reviewer.Migrations
                 type: "nvarchar(255)",
                 maxLength: 255,
                 nullable: true);
+            migrationBuilder.Sql("UPDATE AspNetUsers SET Stars = '*' WHERE UserName = 'Lazar'");
         }
 
         /// <inheritdoc />

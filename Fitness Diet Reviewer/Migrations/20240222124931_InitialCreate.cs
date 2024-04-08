@@ -44,8 +44,7 @@ namespace Fitness_Diet_Reviewer.Migrations
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
-                    Stars = table.Column<int>(type: "nvarchar(255)", nullable: true)
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -296,12 +295,12 @@ namespace Fitness_Diet_Reviewer.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "UserName", "NormalizedUserName", "EmailConfirmed", "PasswordHash", "SecurityStamp", "ConcurrencyStamp", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnabled", "AccessFailedCount", "Stars" },
+                columns: new[] { "Id", "UserName", "NormalizedUserName", "EmailConfirmed", "PasswordHash", "SecurityStamp", "ConcurrencyStamp", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnabled", "AccessFailedCount" },
                 values: new object[,]
                 {
-            { "b7d06e24-db26-4a70-b692-e68b15048abb", "Pesho", "PESHO", true, "AQAAAAIAAYagAAAAEImR8MkICuUdY9A7X6VcauRyeUlhCFz1PAepffVZvtfkjtO9giPrIbw5CwsxonzygQ==", "X53HPGTIWBWIP352MEPDBQ2QJTBJCLIP", "df1ea1bd-cefb-4bb7-a28e-7963bd73a18f", false, false, true, 0,null },
-            { "bfb9fe9b-54c2-4586-a61a-1a42628f7aeb", "Lachezar", "LACHEZAR", true, "AQAAAAIAAYagAAAAEBn9J7byESmmvwSNTuEVqjLgZSkE4SoqEu4LaPMMqHk/T5shu5NEv9e3R8tYg2Cqng==", "TEMP4ZI37R3QDBJNOG3O4DOQOTNTSGAQ", "62733f7d-8864-4f6b-b9b5-743531c157c6", false, false, true, 0,null },
-            { "eac715d8-85df-4807-ac1f-2d7567c1d4fa", "Lazar", "LAZAR", true, "AQAAAAIAAYagAAAAEDjEx12IVl7K8xc7qvNSOnVLJsvpvsfLoNsgxojJAR/KZcVNQCD4RArkhiMbeOT/9A==", "LKH6AKKH3X55IWO6SRQMRYXJ77EDJLAT", "12ebf892-3c62-48f3-95bc-90a95dbc02a9", false, false, true, 0,"*" }
+            { "b7d06e24-db26-4a70-b692-e68b15048abb", "Pesho", "PESHO", true, "AQAAAAIAAYagAAAAEImR8MkICuUdY9A7X6VcauRyeUlhCFz1PAepffVZvtfkjtO9giPrIbw5CwsxonzygQ==", "X53HPGTIWBWIP352MEPDBQ2QJTBJCLIP", "df1ea1bd-cefb-4bb7-a28e-7963bd73a18f", false, false, true, 0 },
+            { "bfb9fe9b-54c2-4586-a61a-1a42628f7aeb", "Lachezar", "LACHEZAR", true, "AQAAAAIAAYagAAAAEBn9J7byESmmvwSNTuEVqjLgZSkE4SoqEu4LaPMMqHk/T5shu5NEv9e3R8tYg2Cqng==", "TEMP4ZI37R3QDBJNOG3O4DOQOTNTSGAQ", "62733f7d-8864-4f6b-b9b5-743531c157c6", false, false, true, 0 },
+            { "eac715d8-85df-4807-ac1f-2d7567c1d4fa", "Lazar", "LAZAR", true, "AQAAAAIAAYagAAAAEDjEx12IVl7K8xc7qvNSOnVLJsvpvsfLoNsgxojJAR/KZcVNQCD4RArkhiMbeOT/9A==", "LKH6AKKH3X55IWO6SRQMRYXJ77EDJLAT", "12ebf892-3c62-48f3-95bc-90a95dbc02a9", false, false, true, 0 }
                 });
 
             migrationBuilder.InsertData(
