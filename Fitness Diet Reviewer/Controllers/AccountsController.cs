@@ -220,6 +220,14 @@ namespace Fitness_Diet_Reviewer.Controllers
             ViewData["Username"] = name;
 
             var user = _context.ApplicationUsers.Where(x => x.UserName == name).First();
+            bool hasFitnessDiet = _context.FitnessDiets.Where(x => x.UserId == user.Id).ToList().Count>0;
+            if (!hasFitnessDiet)
+            {
+                var userToAssign = _userManager.FindByNameAsync(name).Result;
+                var newFitnessDiet = new FitnessDiet() { UserId = userToAssign.Id };
+                _context.FitnessDiets.Add(newFitnessDiet);
+                _context.SaveChanges();
+            }
             var fitnessDiet = _context.FitnessDiets.Where(x => x.UserId == user.Id).First();
             var dailyMealRows = _context.DailyMealRows.Where(x => x.FitnessDietId == fitnessDiet.DietId).ToList();
 

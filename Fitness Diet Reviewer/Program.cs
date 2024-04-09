@@ -3,19 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
 
-void UpdateAppSetting(string key, string value)
-{
-    var configJson = File.ReadAllText("appsettings.json");
-    var config = JsonSerializer.Deserialize<Dictionary<string, object>>(configJson);
-    var test = config[key];
-    config[key] = value;
-    var updatedConfigJson = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
-    File.WriteAllText("appsettings.json", updatedConfigJson);
-}
-string connectionString = $"Server={System.Environment.MachineName}\\SQLEXPRESS; Database=database10; Trusted_Connection=True; Integrated Security=True; TrustServerCertificate=True;";
-var settingsUpdater = new AppSettingsUpdater();
-settingsUpdater.UpdateAppSetting("ConnectionStrings:DietAuditorContext", connectionString);
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
