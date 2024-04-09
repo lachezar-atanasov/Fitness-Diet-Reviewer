@@ -1,3 +1,6 @@
+# Application is deployed in Azure at: 
+- **https://fitnessdietreviewer20240409011736.azurewebsites.net/**
+
 ## User Roles and Credentials
 
 ### Administrator
