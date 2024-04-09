@@ -10,6 +10,7 @@
     Dictionary<string, decimal> carbohydatesPerDay = new Dictionary<string, decimal>();
     Dictionary<string, decimal> fatsPerDay = new Dictionary<string, decimal>();
     var averageCaloriesPerDay = 0m;
+    bool profileIsNotCompleted = Model.ApplicationUser.Age == null || Model.ApplicationUser.Gender == null || Model.ApplicationUser.ActivityLevel == null || Model.ApplicationUser.Height == null || Model.ApplicationUser.Weight == null;
 
     foreach (var day in daysOfWeek)
     {
@@ -335,7 +336,7 @@
                                     <h6 class="text-primary fw-bold m-0">
                                         Statistics
                                         @{
-                                            if (Model.ApplicationUser.Age == null || Model.ApplicationUser.Gender == null || Model.ApplicationUser.ActivityLevel == null || Model.ApplicationUser.Height == null || Model.ApplicationUser.Weight == null)
+                                            if (!profileIsNotCompleted)
                                             {
                                                 <span id="showChart" class="text-primary fw-bold m-0 float-end">
                                                     <a>Show chart</a>
@@ -908,7 +909,7 @@
                                     <h6 class="text-primary fw-bold m-0">
                                         Statistics<span id="showChart" class="text-primary fw-bold m-0 float-end">
                                             @{
-                                                if (Model.ApplicationUser.Age == null || Model.ApplicationUser.Gender == null || Model.ApplicationUser.ActivityLevel == null || Model.ApplicationUser.Height == null || Model.ApplicationUser.Weight == null)
+                                                if (!profileIsNotCompleted)
                                                 {
                                                     <span id="showChart" class="text-primary fw-bold m-0 float-end">
                                                         <a>Show chart</a>
