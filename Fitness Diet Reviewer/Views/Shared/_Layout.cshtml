@@ -75,8 +75,13 @@
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                                                     <li><a asp-action="ViewProfile" asp-controller="Accounts" asp-route-id="@User.Identity.Name" class="dropdown-item">Profile</a></li>
-                                                    <li><a asp-action="ViewProfile" asp-controller="Accounts" asp-route-id="@User.Identity.Name" asp-fragment="guidelines" class="dropdown-item">Guidelines for you</a></li>
-                                                    <li>
+                                                    @{
+                                                        if(!User.IsInRole("Fitness Instructor"))
+                                                        {
+                                                            <li><a asp-action="ViewProfile" asp-controller="Accounts" asp-route-id="@User.Identity.Name" asp-fragment="guidelines" class="dropdown-item">Guidelines for you</a></li>
+                                                        }
+                                                    }
+                                                     <li>
                                                         <hr class="dropdown-divider">
                                                     </li>
                                                     <li><a class="dropdown-item" href="#" onclick="logout()">Sign out</a></li>

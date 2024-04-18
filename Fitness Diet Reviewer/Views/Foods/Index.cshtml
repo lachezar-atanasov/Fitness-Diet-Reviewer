@@ -19,6 +19,12 @@
     <div id="content">
         <div class="container-fluid">
             <h3 class="text-dark mb-4 text-center">Foods list</h3>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
             <div class="card shadow">
                 <div class="card-header py-3">
                     @{

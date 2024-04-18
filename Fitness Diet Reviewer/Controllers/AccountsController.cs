@@ -3,8 +3,6 @@ using Fitness_Diet_Reviewer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fitness_Diet_Reviewer.Controllers
 {
@@ -237,12 +235,18 @@ namespace Fitness_Diet_Reviewer.Controllers
             model.FitnessDiet = fitnessDiet;
             model.DailyMealRows = dailyMealRows;
             model.Foods = _context.Foods.ToList();
+            bool profileIsNotCompleted = model.ApplicationUser.Age == null ||
+                                         model.ApplicationUser.Gender == null ||
+                                         model.ApplicationUser.ActivityLevel == null ||
+                                         model.ApplicationUser.Height == null ||
+                                         model.ApplicationUser.Weight == null;
+            model.ProfileIsNotCompleted = profileIsNotCompleted;
 
             return View(model);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Fitness instructor")]
+        [Authorize(Roles = "Fitness Instructor")]
         public async Task<IActionResult> AddGuideline(string id, string? guidelines)
         {
             var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x=>x.DietId==int.Parse(id));
