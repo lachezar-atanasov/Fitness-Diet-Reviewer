@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Fitness_Diet_Reviewer.ViewModels;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
 
 namespace Fitness_Diet_Reviewer.Controllers
 {
@@ -209,17 +210,64 @@ namespace Fitness_Diet_Reviewer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Create([Bind("FoodName,Proteins,Carbohydrates,Fats")] Food food)
+        public async Task<IActionResult> Create([Bind("FoodName,Proteins,Carbohydrates,Fats")] FoodViewModel food1)
         {
+            Food food = new Food()
+            {
+                FoodName = food1.FoodName,
+                Proteins = decimal.Parse(food1.Proteins,CultureInfo.InvariantCulture),
+                Carbohydrates = decimal.Parse(food1.Carbohydrates, CultureInfo.InvariantCulture),
+                Fats = decimal.Parse(food1.Fats, CultureInfo.InvariantCulture),
+            };
+
             if (ModelState.IsValid)
             {
                 _context.Add(food);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Food {food.FoodName} successfully added!";
                 return RedirectToAction(nameof(Index));
             }
             return View(food);
         }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("FoodName,Proteins,Carbohydrates,Fats")] FoodViewModel food1)
+        {
+            Food food = new Food()
+            {
+                FoodName = food1.FoodName,
+                Proteins = decimal.Parse(food1.Proteins, CultureInfo.InvariantCulture),
+                Carbohydrates = decimal.Parse(food1.Carbohydrates, CultureInfo.InvariantCulture),
+                Fats = decimal.Parse(food1.Fats, CultureInfo.InvariantCulture),
+            };
 
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var entity = _context.Foods.FirstOrDefault(item => item.FoodId == id);
+                    entity.FoodName = food.FoodName;
+                    entity.Proteins = food.Proteins;
+                    entity.Carbohydrates = food.Carbohydrates;
+                    entity.Fats = food.Fats;
+                    await _context.SaveChangesAsync();
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FoodExists(food1.FoodId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return View(food1);
+        }
         // GET: Foods/Edit/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
@@ -230,11 +278,22 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             var food = await _context.Foods.FindAsync(id);
+            
             if (food == null)
             {
                 return NotFound();
             }
-            return View(food);
+
+            FoodViewModel foodToReturn = new FoodViewModel()
+            {
+                FoodId = food.FoodId,
+                FoodName = food.FoodName,
+                Proteins = food.Proteins.ToString().Replace(',', '.'),
+                Carbohydrates = food.Carbohydrates.ToString().Replace(',', '.'),
+                Fats = food.Fats.ToString().Replace(',', '.')
+            };
+
+            return View(foodToReturn);
         }
 
 
@@ -296,6 +355,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Food successfully deleyed!";
             return RedirectToAction(nameof(Index));
         }
 

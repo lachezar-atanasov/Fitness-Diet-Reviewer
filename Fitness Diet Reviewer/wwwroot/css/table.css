@@ -31,6 +31,11 @@ th {
         color:white;
     }
 
+td.inactive:hover {
+    background-color: #fff !important; /* Light blue background on cell hover */
+    cursor: pointer;
+    transition-duration: 1s;
+}
 td:hover {
     background-color: #cce5ff; /* Light blue background on cell hover */
     cursor: pointer;
