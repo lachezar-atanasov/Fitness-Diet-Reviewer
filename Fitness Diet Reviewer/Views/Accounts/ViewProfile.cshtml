@@ -29,12 +29,12 @@
                     <div class="row mb-3">
                         <div class="col-lg-4">
                             @{
-                                await Html.RenderPartialAsync("_EditableProfileLeftPartial", Model);
+                                await Html.RenderPartialAsync("_ViewOnlyProfileLeftPartial", Model);
                             }
                         </div>
                         <div class="col-lg-8">
                             @{
-                                await Html.RenderPartialAsync("_EditableProfileRightPartial", Model);
+                                await Html.RenderPartialAsync("_ViewOnlyProfileRightPartial", Model);
                             }
                         </div>
                     </div>
@@ -72,9 +72,9 @@
                     toolTipContent: "{label} {y}%",
                     legendText: "{label}",
                     dataPoints: [
-                        { y: parseFloat(proteinsPercentage.toFixed(2)), label: "Proteins", color: "#0d6efd" },
-                        { y: parseFloat(carbohydratesPercentage.toFixed(2)), label: "Carbohydrates", color: "#ffc107" },
-                        { y: parseFloat(fatsPercentage.toFixed(2)), label: "Fats", color: "#dc3545" },
+                            { y: parseFloat(proteinsPercentage.toFixed(2)), label: "Proteins - @(String.Format("{0:D}", (Math.Round(Model.ProteinsPerDay.Values.Average())).ToString().Replace(',', '.'))) grams", color: "#0d6efd" },
+                            { y: parseFloat(carbohydratesPercentage.toFixed(2)), label: "Carbohydrates - @(String.Format("{0:D}", (Math.Round(Model.CarbohydratesPerDay.Values.Average()).ToString().Replace(',', '.')))) grams", color: "#ffc107" },
+                        { y: parseFloat(fatsPercentage.toFixed(2)), label: "Fats - @(String.Format("{0:D} ", (Math.Round(Model.FatsPerDay.Values.Average()).ToString().Replace(',', '.')))) grams", color: "#dc3545" },
                     ],
                 }
             ]
