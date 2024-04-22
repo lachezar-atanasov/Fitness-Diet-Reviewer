@@ -4,6 +4,7 @@ using Fitness_Diet_Reviewer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitness_Diet_Reviewer.Migrations
 {
     [DbContext(typeof(DietReviewerContext))]
-    partial class DietReviewerContextModelSnapshot : ModelSnapshot
+    [Migration("20240422165745_Fitness-Diet-Status-Support-1")]
+    partial class FitnessDietStatusSupport1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,9 +174,7 @@ namespace Fitness_Diet_Reviewer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DietId"));
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("NotReady")
                         .HasColumnName("status");
 
                     b.Property<string>("UserId")
@@ -472,9 +473,8 @@ namespace Fitness_Diet_Reviewer.Migrations
                     b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", "User")
                         .WithOne("FitnessDietUser")
                         .HasForeignKey("Fitness_Diet_Reviewer.Models.FitnessDiet", "UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_AspNetUsers_fitness_diets");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

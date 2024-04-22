@@ -4,6 +4,7 @@ using Fitness_Diet_Reviewer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitness_Diet_Reviewer.Migrations
 {
     [DbContext(typeof(DietReviewerContext))]
-    partial class DietReviewerContextModelSnapshot : ModelSnapshot
+    [Migration("20240422171549_Fitness-Diet-Status-Support-3")]
+    partial class FitnessDietStatusSupport3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

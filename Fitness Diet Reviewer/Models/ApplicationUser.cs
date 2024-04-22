@@ -20,8 +20,6 @@ namespace Fitness_Diet_Reviewer.Models
         public string? Gender { get; set; }
 
         public string? ActivityLevel { get; set; }
-
-        public virtual ICollection<FitnessDiet> FitnessDietFitnessInstructors { get; set; } = new List<FitnessDiet>();
         public virtual ICollection<Guideline> GuidelinesFitnessInstructors { get; set; } = new List<Guideline>();
         public virtual FitnessDiet FitnessDietUser { get; set; }
         public virtual RequestedFood RequestedFoodUser { get; set; }

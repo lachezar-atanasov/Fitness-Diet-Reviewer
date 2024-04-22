@@ -104,6 +104,8 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
             entity.HasIndex(e => e.FitnessInstructorId, "IX_guidelines_fitness_instructor_id");
 
             entity.Property(e => e.GuidelineId).HasColumnName("id");
+            entity.Property(e => e.FitnessInstructorId).HasColumnName("fitness_instructor_id");
+            entity.Property(e => e.FitnessDietId).HasColumnName("fitness_diet_id");
 
             entity.Property(e => e.Content)
                 .IsRequired()
@@ -166,11 +168,12 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
                 .ValueGeneratedOnAdd()
                 .HasColumnName("diet_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Status).HasColumnName("status").HasDefaultValue("NotReady");
 
             entity.HasOne(d => d.User).WithOne(p => p.FitnessDietUser)
                 .HasForeignKey<FitnessDiet>(d => d.UserId)
                 .HasConstraintName("FK_AspNetUsers_fitness_diets")
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Restrict); 
         });
 
         modelBuilder.Entity<Food>(entity =>

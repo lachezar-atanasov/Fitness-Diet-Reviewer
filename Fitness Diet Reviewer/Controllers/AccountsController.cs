@@ -266,11 +266,26 @@ namespace Fitness_Diet_Reviewer.Controllers
         }
         [HttpPost]
         [Authorize]
+        public async Task<IActionResult> ChangeStatus(int id, string newStatus)
+        {
+            var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x => x.DietId == id);
+            if (fitnessDiets != null)
+            {
+                fitnessDiets.Status = newStatus;
+                _context.Update(fitnessDiets);
+                await _context.SaveChangesAsync();
+                var currUser = await _userManager.FindByIdAsync(fitnessDiets.UserId);
+                return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+            [HttpPost]
+        [Authorize]
         public async Task<IActionResult> RemoveGuideline(string id)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x => x.DietId == int.Parse(id));
-            var guidelines = _context.Guideline.FirstOrDefault(x => x.FitnessDietId == int.Parse(id) && x.FitnessInstructorId == user.Id); 
+            var guidelines = _context.Guideline.FirstOrDefault(x => x.FitnessDietId == int.Parse(id) && (x.FitnessInstructorId == user.Id || User.IsInRole("Administrator"))); 
             var currUser = await _userManager.FindByIdAsync(fitnessDiets.UserId);
             if (guidelines!=null)
             { 

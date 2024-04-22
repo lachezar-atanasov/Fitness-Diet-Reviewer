@@ -7,8 +7,33 @@
 
 
 <div id="fitness-diet" class="card shadow mb-2">
-    <div class="card-header py-3">
+    <div class="card-header py-3 d-flex justify-content-between">
         <p class="text-primary m-0 fw-bold">@Model.ApplicationUser.UserName - Fitness Diet</p>
+        @{
+            if (Model.Guidelines.Count > 0)
+            {
+                <div class="d-flex align-items-center">
+                    <div class="bg-success rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                    <p class="m-0 text-end">Reviewed</p>
+                </div>
+            }
+            else if (Model.FitnessDiet.Status == "NotReady")
+            {
+                <div class="d-flex align-items-center">
+                    <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                    <p class="m-0 text-end">Not ready for review</p>
+                </div>
+
+            }
+            else if (Model.FitnessDiet.Status == "PendingFeedback")
+            {
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                    <p class="m-0 text-end">Pending Feedback</p>
+                </div>
+            }
+        } 
+        <p class="m-0 text-end">Pending review</p>
     </div>
     <div class="card-body">
         <link rel="stylesheet" href="~/css/table.css" />
@@ -17,187 +42,187 @@
         <div class="container">
             <table class="rounded">
                 <thead>
-                <tr>
-                    <th scope="col">Time</th>
-                    <th scope="col">Monday</th>
-                    <th scope="col">Tuesday</th>
-                    <th scope="col">Wednesday</th>
-                    <th scope="col">Thursday</th>
-                    <th scope="col">Friday</th>
-                    <th scope="col">Saturday</th>
-                    <th scope="col">Sunday</th>
-                </tr>
+                    <tr>
+                        <th scope="col">Time</th>
+                        <th scope="col">Monday</th>
+                        <th scope="col">Tuesday</th>
+                        <th scope="col">Wednesday</th>
+                        <th scope="col">Thursday</th>
+                        <th scope="col">Friday</th>
+                        <th scope="col">Saturday</th>
+                        <th scope="col">Sunday</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var group in Model.FitnessDiet.DailyMealRows.OrderBy(x => x.EatTime).GroupBy(t => t.EatTime))
-                {
-                    <tr class="schedule-row">
-                        <th scope="row">@group.Key</th>
+                    @foreach (var group in Model.FitnessDiet.DailyMealRows.OrderBy(x => x.EatTime).GroupBy(t => t.EatTime))
+                    {
+                        <tr class="schedule-row">
+                            <th scope="row">@group.Key</th>
 
-                        @for (int i = 0; i < 7; i++)
-                        {
-                            //DailyMealRow rowItem2 = new DailyMealRow();
-                            bool hasSecondItem = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).Count() > 1;
-                            DailyMealRow rowItem2 = new DailyMealRow();
-                            if (hasSecondItem)
+                            @for (int i = 0; i < 7; i++)
                             {
-                                rowItem2 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[1];
-                            }
-                            var rowItem = group.FirstOrDefault(x => x.DayOfWeek == Model.DaysOfWeek[i]);
-
-
-                            if (rowItem != null)
-                            {
-                                Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem.Product.Proteins * (rowItem.AmountInGrams / 100) * 4) +
-                                                                              (rowItem.Product.Fats * (rowItem.AmountInGrams / 100) * 9) + (rowItem.Product.Carbohydrates * (rowItem.AmountInGrams / 100) * 4));
-                                Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem.Product.Proteins * (rowItem.AmountInGrams / 100);
-                                Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem.Product.Fats * (rowItem.AmountInGrams / 100);
-                                Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem.Product.Carbohydrates * (rowItem.AmountInGrams / 100);
-
-
+                                //DailyMealRow rowItem2 = new DailyMealRow();
+                                bool hasSecondItem = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).Count() > 1;
+                                DailyMealRow rowItem2 = new DailyMealRow();
                                 if (hasSecondItem)
                                 {
-                                    Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem2.Product.Proteins * (rowItem2.AmountInGrams / 100) * 4) +
-                                                                                  (rowItem2.Product.Fats * (rowItem2.AmountInGrams / 100) * 9) + (rowItem2.Product.Carbohydrates * (rowItem2.AmountInGrams / 100) * 4));
-                                    Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem2.Product.Proteins * (rowItem2.AmountInGrams / 100);
-                                    Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem2.Product.Fats * (rowItem2.AmountInGrams / 100);
-                                    Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem2.Product.Carbohydrates * (rowItem2.AmountInGrams / 100);
-                                    <td style="padding:0px;" class="inactive">
-                                        <table style="border:0px;box-shadow:none!important;margin:0px;">
-                                            <tr>
-                                                <td style="border:0px;padding:0px;">
-                                                    <div class="foodlink">
-                                                        <div>
-                                                            @{
-                                                                var food = Model.Foods.FirstOrDefault(x => x.FoodId == rowItem.ProductId);
-                                                            }
-                                                            @($"{food?.FoodName}")<br>
-                                                            @($"{rowItem.AmountInGrams:0.###} grams")
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td style="border:0px;padding:0px;" class="inactive">+</td>
-                                                <td style="border:0px;padding:0px;">
-                                                    <div class="foodlink">
-                                                        <div>
-                                                            @{
-                                                                var food2 = Model.Foods.FirstOrDefault(x => x.FoodId == rowItem2.ProductId);
-                                                            }
-                                                            @($"{food2?.FoodName}")<br>
-                                                            @($"{rowItem2.AmountInGrams:0.###} grams")
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @{
-                                                bool hasForthItem = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).Count() > 3;
-                                                bool hasThirdItem = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).Count() > 2;
-                                                DailyMealRow rowItem3 = new DailyMealRow();
-                                                DailyMealRow rowItem4 = new DailyMealRow();
-                                                if (hasForthItem)
-                                                {
-                                                    rowItem3 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[2];
-                                                    rowItem4 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[3];
-                                                    Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem3.Product.Proteins * (rowItem3.AmountInGrams / 100) * 4) +
-                                                                                                  (rowItem3.Product.Fats * (rowItem3.AmountInGrams / 100) * 9) + (rowItem3.Product.Carbohydrates * (rowItem3.AmountInGrams / 100) * 4));
-                                                    Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem3.Product.Proteins * (rowItem3.AmountInGrams / 100);
-                                                    Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem3.Product.Fats * (rowItem3.AmountInGrams / 100);
-                                                    Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem3.Product.Carbohydrates * (rowItem3.AmountInGrams / 100);
+                                    rowItem2 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[1];
+                                }
+                                var rowItem = group.FirstOrDefault(x => x.DayOfWeek == Model.DaysOfWeek[i]);
 
-                                                    Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem4.Product.Proteins * (rowItem4.AmountInGrams / 100) * 4) +
-                                                                                                  (rowItem4.Product.Fats * (rowItem4.AmountInGrams / 100) * 9) + (rowItem4.Product.Carbohydrates * (rowItem4.AmountInGrams / 100) * 4));
-                                                    Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem4.Product.Proteins * (rowItem4.AmountInGrams / 100);
-                                                    Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem4.Product.Fats * (rowItem4.AmountInGrams / 100);
-                                                    Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem4.Product.Carbohydrates * (rowItem4.AmountInGrams / 100);
-                                                    <tr>
-                                                        <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;">
+
+                                if (rowItem != null)
+                                {
+                                    Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem.Product.Proteins * (rowItem.AmountInGrams / 100) * 4) +
+                                    (rowItem.Product.Fats * (rowItem.AmountInGrams / 100) * 9) + (rowItem.Product.Carbohydrates * (rowItem.AmountInGrams / 100) * 4));
+                                    Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem.Product.Proteins * (rowItem.AmountInGrams / 100);
+                                    Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem.Product.Fats * (rowItem.AmountInGrams / 100);
+                                    Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem.Product.Carbohydrates * (rowItem.AmountInGrams / 100);
+
+
+                                    if (hasSecondItem)
+                                    {
+                                        Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem2.Product.Proteins * (rowItem2.AmountInGrams / 100) * 4) +
+                                        (rowItem2.Product.Fats * (rowItem2.AmountInGrams / 100) * 9) + (rowItem2.Product.Carbohydrates * (rowItem2.AmountInGrams / 100) * 4));
+                                        Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem2.Product.Proteins * (rowItem2.AmountInGrams / 100);
+                                        Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem2.Product.Fats * (rowItem2.AmountInGrams / 100);
+                                        Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem2.Product.Carbohydrates * (rowItem2.AmountInGrams / 100);
+                                        <td style="padding:0px;" class="inactive">
+                                            <table style="border:0px;box-shadow:none!important;margin:0px;">
+                                                <tr>
+                                                    <td style="border:0px;padding:0px;">
+                                                        <div class="foodlink">
                                                             <div>
-                                                                @rowItem3.Product.FoodName<br>
-                                                                @rowItem3.AmountInGrams grams
+                                                                @{
+                                                                    var food = Model.Foods.FirstOrDefault(x => x.FoodId == rowItem.ProductId);
+                                                                }
+                                                                @($"{food?.FoodName}")<br>
+                                                                @($"{rowItem.AmountInGrams:0.###} grams")
                                                             </div>
-                                                        </td>
-                                                        <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;" class="inactive">
+                                                        </div>
+                                                    </td>
+                                                    <td style="border:0px;padding:0px;" class="inactive">+</td>
+                                                    <td style="border:0px;padding:0px;">
+                                                        <div class="foodlink">
                                                             <div>
-                                                                +
+                                                                @{
+                                                                    var food2 = Model.Foods.FirstOrDefault(x => x.FoodId == rowItem2.ProductId);
+                                                                }
+                                                                @($"{food2?.FoodName}")<br>
+                                                                @($"{rowItem2.AmountInGrams:0.###} grams")
                                                             </div>
-                                                        </td>
-                                                        <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;">
-                                                            <div>
-                                                                @rowItem4.Product.FoodName<br>
-                                                                @rowItem4.AmountInGrams grams
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @{
+                                                    bool hasForthItem = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).Count() > 3;
+                                                    bool hasThirdItem = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).Count() > 2;
+                                                    DailyMealRow rowItem3 = new DailyMealRow();
+                                                    DailyMealRow rowItem4 = new DailyMealRow();
+                                                    if (hasForthItem)
+                                                    {
+                                                        rowItem3 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[2];
+                                                        rowItem4 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[3];
+                                                        Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem3.Product.Proteins * (rowItem3.AmountInGrams / 100) * 4) +
+                                                        (rowItem3.Product.Fats * (rowItem3.AmountInGrams / 100) * 9) + (rowItem3.Product.Carbohydrates * (rowItem3.AmountInGrams / 100) * 4));
+                                                        Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem3.Product.Proteins * (rowItem3.AmountInGrams / 100);
+                                                        Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem3.Product.Fats * (rowItem3.AmountInGrams / 100);
+                                                        Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem3.Product.Carbohydrates * (rowItem3.AmountInGrams / 100);
+
+                                                        Model.CaloriesPerDay[Model.DaysOfWeek[i]] += ((rowItem4.Product.Proteins * (rowItem4.AmountInGrams / 100) * 4) +
+                                                        (rowItem4.Product.Fats * (rowItem4.AmountInGrams / 100) * 9) + (rowItem4.Product.Carbohydrates * (rowItem4.AmountInGrams / 100) * 4));
+                                                        Model.ProteinsPerDay[Model.DaysOfWeek[i]] += rowItem4.Product.Proteins * (rowItem4.AmountInGrams / 100);
+                                                        Model.FatsPerDay[Model.DaysOfWeek[i]] += rowItem4.Product.Fats * (rowItem4.AmountInGrams / 100);
+                                                        Model.CarbohydratesPerDay[Model.DaysOfWeek[i]] += rowItem4.Product.Carbohydrates * (rowItem4.AmountInGrams / 100);
+                                                        <tr>
+                                                            <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;">
+                                                                <div>
+                                                                    @rowItem3.Product.FoodName<br>
+                                                                    @rowItem3.AmountInGrams grams
+                                                                </div>
+                                                            </td>
+                                                            <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;" class="inactive">
+                                                                <div>
+                                                                    +
+                                                                </div>
+                                                            </td>
+                                                            <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;">
+                                                                <div>
+                                                                    @rowItem4.Product.FoodName<br>
+                                                                    @rowItem4.AmountInGrams grams
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    else if (hasThirdItem)
+                                                    {
+                                                        rowItem3 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[2];
+                                                        <tr>
+                                                            <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;" colspan="3">
+                                                                <div>
+                                                                    @rowItem3.Product.FoodName<br>
+                                                                    @rowItem3.AmountInGrams grams
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
                                                 }
-                                                else if (hasThirdItem)
-                                                {
-                                                    rowItem3 = group.Where(x => x.DayOfWeek == Model.DaysOfWeek[i]).ToArray()[2];
-                                                    <tr>
-                                                        <td style="border-top:1px solid #ccc; border-bottom: 0px; border-right:0px; border-left:0px; padding:0px;" colspan="3">
-                                                            <div>
-                                                                @rowItem3.Product.FoodName<br>
-                                                                @rowItem3.AmountInGrams grams
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-                                        </table>
-                                    </td>
+                                            </table>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <div class="foodlink">
+                                                <div>
+                                                    @{
+                                                        var food = Model.Foods.FirstOrDefault(x => x.FoodId == rowItem.ProductId);
+                                                    }
+                                                    @($"{food?.FoodName}")<br>
+                                                    @($"{rowItem.AmountInGrams:0.###} grams")
+                                                </div>
+                                            </div>
+                                        </td>
+                                    }
+
+
                                 }
                                 else
                                 {
-                                    <td>
+                                    <td class="addTd">
                                         <div class="foodlink">
-                                            <div>
-                                                @{
-                                                    var food = Model.Foods.FirstOrDefault(x => x.FoodId == rowItem.ProductId);
-                                                }
-                                                @($"{food?.FoodName}")<br>
-                                                @($"{rowItem.AmountInGrams:0.###} grams")
-                                            </div>
                                         </div>
                                     </td>
+
                                 }
-
-
                             }
-                            else
+                        </tr>
+                    }
+                    <tr>
+                        <th><a asp-controller="DailyMealRows" asp-action="Create" class="text-decoration-none text-black"><div>Add new</div></a></th>
+                        @{
+                            foreach (var day in Model.DaysOfWeek)
                             {
-                                <td class="addTd">
-                                    <div class="foodlink">
-                                    </div>
-                                </td>
-
+                                <th>
+                                    <a class="foodlink">
+                                        <div class="addbutton">Add meal here</div>
+                                    </a>
+                                </th>
                             }
                         }
                     </tr>
-                }
-                <tr>
-                    <th><a asp-controller="DailyMealRows" asp-action="Create" class="text-decoration-none text-black"><div>Add new</div></a></th>
-                    @{
-                        foreach (var day in Model.DaysOfWeek)
-                        {
-                            <th>
-                                <a class="foodlink">
-                                    <div class="addbutton">Add meal here</div>
-                                </a>
-                            </th>
+                    <tr>
+                        <th></th>
+                        @{
+                            foreach (var day in Model.DaysOfWeek)
+                            {
+                                <th>
+                                    <p>Calories: @String.Format("{0:0.##}", Model.CaloriesPerDay[day])</p>
+                                    <p>Proteins: @String.Format("{0:0.##}", Model.ProteinsPerDay[day])</p>
+                                </th>
+                            }
                         }
-                    }
-                </tr>
-                <tr>
-                    <th></th>
-                    @{
-                        foreach (var day in Model.DaysOfWeek)
-                        {
-                            <th>
-                                <p>Calories: @String.Format("{0:0.##}", Model.CaloriesPerDay[day])</p>
-                                <p>Proteins: @String.Format("{0:0.##}", Model.ProteinsPerDay[day])</p>
-                            </th>
-                        }
-                    }
-                </tr>
+                    </tr>
                 </tbody>
             </table>
         </div>
