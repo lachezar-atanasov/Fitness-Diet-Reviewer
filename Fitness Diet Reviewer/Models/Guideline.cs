@@ -8,14 +8,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Fitness_Diet_Reviewer.Models;
 
-public partial class FitnessDiet
+public partial class Guideline
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int DietId { get; set; }
-    public string UserId { get; set; }
-
-    public virtual ICollection<DailyMealRow> DailyMealRows { get; set; } = new List<DailyMealRow>();
-    public virtual ICollection<Guideline> Guidelines { get; set; } = new List<Guideline>();
-    public virtual ApplicationUser User { get; set; }
+    public int GuidelineId { get; set; }
+    public string Content { get; set; }
+    public string FitnessInstructorId { get; set; }
+    public int FitnessDietId { get; set; }
+    public virtual FitnessDiet FitnessDiet { get; set; }
+    public virtual ApplicationUser FitnessInstructor { get; set; }
 }
