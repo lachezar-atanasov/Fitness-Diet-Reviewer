@@ -387,6 +387,17 @@ values: new object[,]
             { 48, "Pecans", 9.20m, 14.00m, 72.00m },
             { 49, "Pistachios", 20.00m, 27.00m, 45.00m },
             { 50, "Blue Cheese", 21.00m, 2.30m, 29.00m },
+            { 51, "Oat flakes", 12.00m, 62.00m, 7.20m },
+            { 52, "Pork loin", 26.00m, 8.80m, 0.00m },
+            { 53, "Cow milk", 3.00m, 5.00m, 3.00m },
+            { 58, "Potatoes", 2.02m, 17.47m, 0.09m },
+            { 59, "Sugar", 0.00m, 100.00m, 0.00m },
+            { 60, "White Bread", 7.64m, 50.61m, 3.29m },
+            { 61, "Beef Kebabs", 19.00m, 6.00m, 16.00m },
+            { 62, "Bechamel", 3.80m, 7.00m, 7.00m },
+            { 63, "Hazelnut", 15.00m, 17.00m, 61.00m },
+            { 64, "Iceberg", 1.00m, 3.00m, 1.00m },
+            { 65, "Meatballs", 21.00m, 8.00m, 9.00m }
         });
         }
         /// <inheritdoc />

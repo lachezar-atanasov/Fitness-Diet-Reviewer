@@ -21,9 +21,8 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
 
     public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public virtual DbSet<DailyMealRow> DailyMealRows { get; set; }
-
     public virtual DbSet<FitnessDiet> FitnessDiets { get; set; }
-
+    public virtual DbSet<Guideline> Guideline { get; set; }
     public virtual DbSet<Food> Foods { get; set; }
     public virtual DbSet<RequestedFood> RequestedFoods { get; set; }
 
@@ -40,7 +39,6 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
 
         modelBuilder.Entity<ApplicationUser>().ToTable("AspNetUsers");
 
@@ -84,8 +82,8 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
 
 
         modelBuilder.Entity<ApplicationUser>()
-    .HasMany(user => user.FitnessDietFitnessInstructors)
-    .WithOne(diet => diet.FitnessInstructor)
+    .HasMany(user => user.GuidelinesFitnessInstructors)
+    .WithOne(guideline => guideline.FitnessInstructor)
     .HasForeignKey(diet => diet.FitnessInstructorId)
     .IsRequired();
 
@@ -95,7 +93,34 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
             .HasForeignKey<FitnessDiet>(diet => diet.UserId)
             .IsRequired();
 
+        modelBuilder.Entity<Guideline>(entity =>
+        {
+            entity.HasKey(e => e.GuidelineId).HasName("PK__guideline_id");
 
+            entity.ToTable("guidelines");
+
+            entity.HasIndex(e => e.FitnessDietId, "IX_guidelines_fitness_diet_id");
+
+            entity.HasIndex(e => e.FitnessInstructorId, "IX_guidelines_fitness_instructor_id");
+
+            entity.Property(e => e.GuidelineId).HasColumnName("id");
+
+            entity.Property(e => e.Content)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("content");
+
+            entity.HasOne(d => d.FitnessDiet).WithMany(p => p.Guidelines)
+                .HasForeignKey(d => d.FitnessDietId)
+                .HasConstraintName("FK_guidelines_fitness_diets")
+                .OnDelete(DeleteBehavior.Restrict);
+            ;
+
+            entity.HasOne(d => d.FitnessInstructor).WithMany(p => p.GuidelinesFitnessInstructors)
+                .HasForeignKey(d => d.FitnessInstructorId)
+                .HasConstraintName("FK_guidelines_fitness_instructors")
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
         modelBuilder.Entity<DailyMealRow>(entity =>
         {
@@ -140,17 +165,7 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
             entity.Property(e => e.DietId)
                 .ValueGeneratedOnAdd()
                 .HasColumnName("diet_id");
-            entity.Property(e => e.FitnessInstructorId)
-                .HasMaxLength(450)
-                .IsRequired(false)
-                .HasColumnName("fitness_instructor_id");
-            entity.Property(e => e.Guidelines).HasColumnName("guidelines").IsRequired(false);
             entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.FitnessInstructor).WithMany(p => p.FitnessDietFitnessInstructors)
-                .HasForeignKey(d => d.FitnessInstructorId)
-                .HasConstraintName("FK_fitness_instructors_AspNetUsers")
-                .OnDelete(DeleteBehavior.NoAction); 
 
             entity.HasOne(d => d.User).WithOne(p => p.FitnessDietUser)
                 .HasForeignKey<FitnessDiet>(d => d.UserId)

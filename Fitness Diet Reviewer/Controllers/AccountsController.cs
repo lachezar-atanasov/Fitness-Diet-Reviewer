@@ -227,6 +227,7 @@ namespace Fitness_Diet_Reviewer.Controllers
                 _context.SaveChanges();
             }
             var fitnessDiet = _context.FitnessDiets.Where(x => x.UserId == user.Id).First();
+            var guidelines = _context.Guideline.Where(x => x.FitnessDietId == fitnessDiet.DietId).ToList();
             var dailyMealRows = _context.DailyMealRows.Where(x => x.FitnessDietId == fitnessDiet.DietId).ToList();
 
             var model = new AccountViewModel();
@@ -234,6 +235,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             model.ApplicationUser = user;
             model.FitnessDiet = fitnessDiet;
             model.DailyMealRows = dailyMealRows;
+            model.Guidelines = guidelines;
             model.Foods = _context.Foods.ToList();
             bool profileIsNotCompleted = model.ApplicationUser.Age == null ||
                                          model.ApplicationUser.Gender == null ||
@@ -252,9 +254,13 @@ namespace Fitness_Diet_Reviewer.Controllers
             var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x=>x.DietId==int.Parse(id));
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var currUser = await _userManager.FindByIdAsync(fitnessDiets.UserId);
-            fitnessDiets.FitnessInstructorId = user.Id;
-            fitnessDiets.Guidelines = guidelines;
-            _context.Update(fitnessDiets);
+            var gudeilineToAdd = new Guideline()
+            {
+                Content = guidelines,
+                FitnessDietId = int.Parse(id),
+                FitnessInstructorId = user.Id
+            };
+            _context.Guideline.AddAsync(gudeilineToAdd);
             _context.SaveChanges();
             return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName });
         }
@@ -262,13 +268,16 @@ namespace Fitness_Diet_Reviewer.Controllers
         [Authorize]
         public async Task<IActionResult> RemoveGuideline(string id)
         {
-            var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x => x.DietId == int.Parse(id));
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x => x.DietId == int.Parse(id));
+            var guidelines = _context.Guideline.FirstOrDefault(x => x.FitnessDietId == int.Parse(id) && x.FitnessInstructorId == user.Id); 
             var currUser = await _userManager.FindByIdAsync(fitnessDiets.UserId);
-            fitnessDiets.FitnessInstructorId = null;
-            fitnessDiets.Guidelines = null;
-            _context.Update(fitnessDiets);
-            _context.SaveChanges();
+            if (guidelines!=null)
+            { 
+                _context.Remove(guidelines);
+                _context.SaveChanges(); 
+            }
+            
             return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName});
         }
 

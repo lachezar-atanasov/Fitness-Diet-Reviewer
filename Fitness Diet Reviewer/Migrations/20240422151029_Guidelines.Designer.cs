@@ -4,6 +4,7 @@ using Fitness_Diet_Reviewer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitness_Diet_Reviewer.Migrations
 {
     [DbContext(typeof(DietReviewerContext))]
-    partial class DietReviewerContextModelSnapshot : ModelSnapshot
+    [Migration("20240422151029_Guidelines")]
+    partial class Guidelines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +173,7 @@ namespace Fitness_Diet_Reviewer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DietId"));
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("FitnessInstructorId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
@@ -181,7 +184,7 @@ namespace Fitness_Diet_Reviewer.Migrations
                     b.HasKey("DietId")
                         .HasName("PK_fitness_diets");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("FitnessInstructorId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -248,8 +251,13 @@ namespace Fitness_Diet_Reviewer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("GuidelineId")
                         .HasName("PK__guideline_id");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex(new[] { "FitnessDietId" }, "IX_guidelines_fitness_diet_id");
 
@@ -466,9 +474,9 @@ namespace Fitness_Diet_Reviewer.Migrations
 
             modelBuilder.Entity("Fitness_Diet_Reviewer.Models.FitnessDiet", b =>
                 {
-                    b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", null)
+                    b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", "FitnessInstructor")
                         .WithMany("FitnessDietFitnessInstructors")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("FitnessInstructorId");
 
                     b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", "User")
                         .WithOne("FitnessDietUser")
@@ -476,6 +484,8 @@ namespace Fitness_Diet_Reviewer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_AspNetUsers_fitness_diets");
+
+                    b.Navigation("FitnessInstructor");
 
                     b.Navigation("User");
                 });
@@ -496,9 +506,15 @@ namespace Fitness_Diet_Reviewer.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_guidelines_fitness_instructors");
 
+                    b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("FitnessDiet");
 
                     b.Navigation("FitnessInstructor");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Fitness_Diet_Reviewer.Models.RequestedFood", b =>

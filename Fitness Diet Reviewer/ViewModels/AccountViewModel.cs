@@ -9,6 +9,7 @@ namespace Fitness_Diet_Reviewer.ViewModels
         public ApplicationUser ApplicationUser { get; set; }
         public List<Food> Foods { get; set; }
         public List<DailyMealRow> DailyMealRows { get; set; }
+        public List<Guideline> Guidelines { get; set; }
 
         public string[] DaysOfWeek { get; } = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         public Dictionary<string, decimal> CaloriesPerDay { get; set; } = new();

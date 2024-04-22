@@ -224,75 +224,7 @@
     </div>
 </div>
 
-                if (Model.FitnessDiet.Guidelines != null)
-                    {
-<div id="guidelines" class="card shadow mb-5">
-    <div class="card-header py-3">
-        <p class="text-primary m-0 fw-bold">Guidelines</p>
-    </div>
-    <div class="card-body text-center">
-        <img class="rounded-circle me-2" width="30" height="30" src="data:image/png;base64,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">
-        @{
-            var rank = "";
-            switch (UserManager.FindByIdAsync(Model.FitnessDiet.FitnessInstructorId).Result.Stars.Length)
-            {
-                case 1:
-                    rank = "Novice";
-                    break;
 
-                case 2:
-                    rank = "Advanced";
-                    break;
-
-                case 3:
-                    rank = "Expert";
-                    break;
-                case 4:
-                    rank = "Elite";
-                    break;
-                case 5:
-                    rank = "Master";
-                    break;
-
-            }
-        }
-        <b>(@rank)</b> Fitness instructor <b>
-            (@UserManager.FindByIdAsync(Model.FitnessDiet.FitnessInstructorId).Result.FirstName
-            @UserManager.FindByIdAsync(Model.FitnessDiet.FitnessInstructorId).Result.LastName)
-        </b>:
-        @Model.FitnessDiet.Guidelines
-
-        @{
-            if ((User.Identity.Name == UserManager.FindByIdAsync(Model.FitnessDiet.FitnessInstructorId).Result.UserName) || User.IsInRole("Administrator"))
-            {
-                <form asp-action="RemoveGuideline" asp-route-id="@Model.FitnessDiet.DietId" method="post">
-                    <button class="btn btn-danger btn-sm" type="submit">Remove guideline</button>
-                </form>
-            }
-        }
-    </div>
-
-</div>
-                    }
-                    else
-                    {
-<div id="guidelines" class="card shadow mb-2">
-    <div class="card-header py-3">
-        <p class="text-primary m-0 fw-bold text-center">User has no guidelines yet</p>
-    </div>
-</div>
-                    }
-                    if (User.IsInRole("Fitness Instructor"))
-                    {
-<div id="addGuideline" class="card shadow mb-5">
-    <div class="card-header py-3">
-        <p class="text-primary m-0 fw-bold">Guidelines</p>
-    </div>
-    <div class="card-body text-center">
-        <form asp-action="AddGuideline" asp-route-id="@Model.FitnessDiet.DietId" method="post">
-            <div class="mb-3"><label class="form-label" for="guidelines"><strong>Your guideline</strong><br></label><textarea class="form-control" id="guideline" rows="5" name="guidelines"></textarea></div>
-            <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Add guideline</button></div>
-        </form>
-    </div>
-</div>
-                    }
+@{
+    await Html.RenderPartialAsync("_GuidelinesPartial", Model);
+}
