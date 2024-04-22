@@ -206,46 +206,6 @@
                 </div>
                 <div id="chartContainer" style="width:300px;height:300px"></div>
 
-                @{
-                    var totalGrams = Model.ProteinsPerDay.Values.Sum() + Model.CarbohydratesPerDay.Values.Sum() + Model.FatsPerDay.Values.Sum();
-                    totalGrams = totalGrams == 0 ? 1 : totalGrams;
-                }
-
-                <script type="text/javascript">
-
-                    $(function () {
-                        // Assuming Model.ProteinsPerDay.Values.Average(), Model.CarbohydratesPerDay.Values.Average(), and Model.FatsPerDay.Values.Average()
-                        // are server-side variables representing average percentages on the server.
-
-                        var proteinsPercentage = @(String.Format("{0:0.##}", (Model.ProteinsPerDay.Values.Sum() / totalGrams) * 100).Replace(',', '.'));
-                        var carbohydratesPercentage = @(String.Format("{0:0.##}", (Model.CarbohydratesPerDay.Values.Sum() / totalGrams) * 100).Replace(',', '.'));
-                        var fatsPercentage = @(String.Format("{0:0.##}", (Model.FatsPerDay.Values.Sum() / totalGrams) * 100).Replace(',', '.'));
-
-                        var chart = new CanvasJS.Chart("chartContainer", {
-                            title: {
-                                text: "Nutrients in %"
-                            },
-                            animationEnabled: true,
-                            theme: "light2",
-                            data: [
-                                {
-                                    type: "pie",
-                                    showInLegend: true,
-                                    toolTipContent: "{label} {y}%",
-                                    legendText: "{label}",
-                                    dataPoints: [
-                                        { y: parseFloat(proteinsPercentage.toFixed(2)), label: "Proteins", color: "#0d6efd" },
-                                        { y: parseFloat(carbohydratesPercentage.toFixed(2)), label: "Carbohydrates", color: "#ffc107" },
-                                        { y: parseFloat(fatsPercentage.toFixed(2)), label: "Fats", color: "#dc3545" },
-                                    ],
-                                }
-                            ]
-                        });
-                        chart.render();
-                        $("#chartContainer").addClass("d-none");
-                    });
-
-                </script>
 
             </div>
         </div>

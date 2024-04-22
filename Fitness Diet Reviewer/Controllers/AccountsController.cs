@@ -196,6 +196,83 @@ namespace Fitness_Diet_Reviewer.Controllers
 
             return View(paginatedList);
         }
+        [Authorize]
+        public async Task<IActionResult> FitnessDietsList(string sortOrder, string currentFilter, string searchString, int? pageIndex, int pageSize = 10)
+        {
+
+            ViewData["NameSort"] = String.IsNullOrEmpty(sortOrder) ? "nameSort_desc" : "";
+            ViewData["AgeSort"] = sortOrder == "ages" ? "ages_desc" : "ages";
+            ViewData["WeightSort"] = sortOrder == "weight" ? "weight_desc" : "weight";
+            ViewData["GenderSort"] = sortOrder == "gender" ? "gender_desc" : "gender";
+            //ViewData["CarbohydratesSort"] = sortOrder == "carbohydrates" ? "carbohydrates_desc" : "carbohydrates";
+
+            if (searchString != null)
+            {
+                pageIndex = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var users = from userRole in _context.UserRoles
+                        join user in _context.Users on userRole.UserId equals user.Id
+                        select user;
+
+            // Filter foods based on the search string
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(f =>
+                    f.UserName.Contains(searchString)
+                );
+            }
+
+            users = users.Where(x => x.FitnessDietUser.Status == "PendingFeedback");
+
+
+
+            switch (sortOrder)
+            {
+                case "nameSort_desc":
+                    users = users.OrderByDescending(u => u.UserName);
+                    break;
+                case "ages":
+                    users = users.OrderBy(u => u.Age);
+                    break;
+                case "ages_desc":
+                    users = users.OrderByDescending(u => u.Age);
+                    break;
+                case "weight":
+                    users = users.OrderBy(u => u.Weight);
+                    break;
+                case "weight_desc":
+                    users = users.OrderByDescending(u => u.Weight);
+                    break;
+                case "gender":
+                    users = users.OrderBy(u => u.Gender);
+                    break;
+                case "gender_desc":
+                    users = users.OrderByDescending(u => u.Gender);
+                    break;
+                // Add more cases for other sorting options
+
+                default:
+                    users = users.OrderBy(u => u.UserName);
+                    break;
+            }
+
+
+            ViewData["TotalCount"] = users.Count();
+
+            int pageNumber = pageIndex ?? 1;
+
+            var paginatedList = await PaginatedList<ApplicationUser>.CreateAsync(users.AsQueryable(), pageNumber, pageSize);
+
+            return View(paginatedList);
+        }
+
 
         [Authorize]
         public IActionResult ViewProfile([FromRoute(Name = "id")] string name)
@@ -262,6 +339,9 @@ namespace Fitness_Diet_Reviewer.Controllers
             };
             _context.Guideline.AddAsync(gudeilineToAdd);
             _context.SaveChanges();
+            fitnessDiets.Status = "Reviewed";
+            _context.Update(fitnessDiets);
+            await _context.SaveChangesAsync();
             return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName });
         }
         [HttpPost]
@@ -275,6 +355,7 @@ namespace Fitness_Diet_Reviewer.Controllers
                 _context.Update(fitnessDiets);
                 await _context.SaveChangesAsync();
                 var currUser = await _userManager.FindByIdAsync(fitnessDiets.UserId);
+
                 return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName });
             }
             return RedirectToAction("Index", "Home");
@@ -290,7 +371,13 @@ namespace Fitness_Diet_Reviewer.Controllers
             if (guidelines!=null)
             { 
                 _context.Remove(guidelines);
-                _context.SaveChanges(); 
+                _context.SaveChanges();
+                if (fitnessDiets.Guidelines.Count == 0)
+                {
+                    fitnessDiets.Status = "PendingFeedback";
+                    _context.Update(fitnessDiets);
+                    await _context.SaveChangesAsync();
+                }
             }
             
             return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName});
