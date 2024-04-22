@@ -14,7 +14,7 @@ public partial class FitnessDiet
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int DietId { get; set; }
     public string UserId { get; set; }
-
+    public string Status { get; set; }
     public virtual ICollection<DailyMealRow> DailyMealRows { get; set; } = new List<DailyMealRow>();
     public virtual ICollection<Guideline> Guidelines { get; set; } = new List<Guideline>();
     public virtual ApplicationUser User { get; set; }

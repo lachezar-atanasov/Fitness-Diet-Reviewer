@@ -4,6 +4,7 @@ using Fitness_Diet_Reviewer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitness_Diet_Reviewer.Migrations
 {
     [DbContext(typeof(DietReviewerContext))]
-    partial class DietReviewerContextModelSnapshot : ModelSnapshot
+    [Migration("20240422163917_Fitness-Diet-Status-Support")]
+    partial class FitnessDietStatusSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,10 +173,11 @@ namespace Fitness_Diet_Reviewer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DietId"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("NotReady")
                         .HasColumnName("status");
 
                     b.Property<string>("UserId")
@@ -183,6 +187,8 @@ namespace Fitness_Diet_Reviewer.Migrations
 
                     b.HasKey("DietId")
                         .HasName("PK_fitness_diets");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -469,6 +475,10 @@ namespace Fitness_Diet_Reviewer.Migrations
 
             modelBuilder.Entity("Fitness_Diet_Reviewer.Models.FitnessDiet", b =>
                 {
+                    b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", null)
+                        .WithMany("FitnessDietFitnessInstructors")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Fitness_Diet_Reviewer.Models.ApplicationUser", "User")
                         .WithOne("FitnessDietUser")
                         .HasForeignKey("Fitness_Diet_Reviewer.Models.FitnessDiet", "UserId")
@@ -564,6 +574,8 @@ namespace Fitness_Diet_Reviewer.Migrations
 
             modelBuilder.Entity("Fitness_Diet_Reviewer.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("FitnessDietFitnessInstructors");
+
                     b.Navigation("FitnessDietUser")
                         .IsRequired();
 
