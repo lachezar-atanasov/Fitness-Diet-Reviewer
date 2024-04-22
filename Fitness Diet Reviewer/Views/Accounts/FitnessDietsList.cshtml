@@ -149,11 +149,6 @@
                                                    asp-route-sortOrder="@ViewData["GenderSort"]"
                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]">Gender</a>
                                             </th>
-                                            <th>
-                                                <a asp-action="FitnessDietsList"
-                                                   asp-route-sortOrder="@ViewData["StatusSort"]"
-                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Gender</a>
-                                            </th>
                                             <th>Fitness Diet Status</th>
                                             @{
                                                 if(User.IsInRole("Administrator"))
