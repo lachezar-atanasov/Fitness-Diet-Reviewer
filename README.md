@@ -11,7 +11,7 @@ Regular user login -> Your fitness diet section -> Interact with table
 - **Username:** Pesho
 - **Password:** aA123123!!
 - **Role:** User
-- 
+  
 ### Fitness Instructor
 - **Username:** Lazar
 - **Password:** aA123123!!
