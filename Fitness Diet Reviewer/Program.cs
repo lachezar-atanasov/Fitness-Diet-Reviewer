@@ -1,12 +1,15 @@
 using Fitness_Diet_Reviewer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services
+    .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<DietReviewerContext>().AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<DietReviewerContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -29,6 +32,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = false;
 });
 
+
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
@@ -41,6 +46,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddApplicationInsightsTelemetry();
 
 
 builder.Services.AddDbContext<DietReviewerContext>(options =>
@@ -66,7 +73,7 @@ using (var serviceScope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+    
 app.UseRouting();
 
 app.UseAuthorization();
@@ -79,7 +86,7 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
+    
     var roles = new[] { "Administrator", "Fitness Instructor", "User" };
     foreach (var role in roles)
     {
