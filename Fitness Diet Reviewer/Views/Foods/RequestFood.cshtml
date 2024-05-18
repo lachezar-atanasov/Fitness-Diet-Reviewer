@@ -1,11 +1,13 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Fitness_Diet_Reviewer.ViewModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Fitness_Diet_Reviewer.Models.RequestedFood
 @inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Request food";
 }
-<h1 class="text-center">Request a food to add to database</h1>
+<h1 class="text-center">Request food to add to database</h1>
 <hr />
 @if (TempData["SuccessMessage"] != null)
 {
@@ -18,6 +20,9 @@
         <form asp-action="RequestFood">
             <input type="hidden" asp-for="UserId" value="@(User.Identity.Name)" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating mb-3">
+                @ViewItems.CreateSearchBox("ProductId", "foodInput", "/Foods/Search", "Check food if already exists here")
+            </div>
             <div class="form-group mb-3">
                 <label asp-for="FoodName" class="control-label"></label>
                 <input asp-for="FoodName" class="form-control" />

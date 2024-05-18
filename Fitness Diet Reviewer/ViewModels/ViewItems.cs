@@ -69,10 +69,14 @@
                             }},
                             cache: true
                         }},
-                        minimumInputLength: 1,
-                        tags: true, // Allow manual entry of text not in the dropdown
+                        minimumInputLength: 1
                     }});
                 }});
+
+                      $(document).on('select2:open', () => {{
+        document.querySelector('.select2-search__field').focus();
+      }});
+
             </script>
 
             <div class='col'>
