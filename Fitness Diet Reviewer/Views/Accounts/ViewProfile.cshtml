@@ -26,18 +26,18 @@
                 {
                     await Html.RenderPartialAsync("_ViewOnlyFitnessTablePartial", Model);
 
-                    <div class="row mb-3">
-                        <div class="col-lg-4">
-                            @{
+                            <div class="row mb-3">
+                                <div class="col-lg-4">
+                                    @{
                                 await Html.RenderPartialAsync("_ViewOnlyProfileLeftPartial", Model);
-                            }
-                        </div>
-                        <div class="col-lg-8">
-                            @{
+                                    }
+                                </div>
+                                <div class="col-lg-8">
+                                    @{
                                 await Html.RenderPartialAsync("_ViewOnlyProfileRightPartial", Model);
-                            }
-                        </div>
-                    </div>
+                                    }
+                                </div>
+                            </div>
 
                 }
             }
@@ -58,10 +58,14 @@
         var proteinsPercentage = @(String.Format("{0:0.##}", (Model.ProteinsPerDay.Values.Sum() / totalGrams) * 100).Replace(',', '.'));
         var carbohydratesPercentage = @(String.Format("{0:0.##}", (Model.CarbohydratesPerDay.Values.Sum() / totalGrams) * 100).Replace(',', '.'));
         var fatsPercentage = @(String.Format("{0:0.##}", (Model.FatsPerDay.Values.Sum() / totalGrams) * 100).Replace(',', '.'));
-
+            var proteinsGrams = @(String.Format("{0:D}", (Math.Round(Model.ProteinsPerDay.Values.Average())).ToString().Replace(',', '.')));
+            var carbohydratesGrams = @(String.Format("{0:D}", (Math.Round(Model.CarbohydratesPerDay.Values.Average()).ToString().Replace(',', '.'))));
+            var fatsGrams = - @(String.Format("{0:D} ", (Math.Round(Model.FatsPerDay.Values.Average()).ToString().Replace(',', '.'))));
         var chart = new CanvasJS.Chart("chartContainer", {
             title: {
-                text: "Nutrients in %"
+                    text: "Nutrients in %(average per day)",
+                                    wrap: true,  
+                    maxWidth: 250
             },
             animationEnabled: true,
             theme: "light2",
@@ -70,11 +74,11 @@
                     type: "pie",
                     showInLegend: true,
                     toolTipContent: "{label} {y}%",
-                    legendText: "{label}",
+                        legendText: "{label} {z} grams\u000A",
                     dataPoints: [
-                            { y: parseFloat(proteinsPercentage.toFixed(2)), label: "Proteins - @(String.Format("{0:D}", (Math.Round(Model.ProteinsPerDay.Values.Average())).ToString().Replace(',', '.'))) grams", color: "#0d6efd" },
-                            { y: parseFloat(carbohydratesPercentage.toFixed(2)), label: "Carbohydrates - @(String.Format("{0:D}", (Math.Round(Model.CarbohydratesPerDay.Values.Average()).ToString().Replace(',', '.')))) grams", color: "#ffc107" },
-                        { y: parseFloat(fatsPercentage.toFixed(2)), label: "Fats - @(String.Format("{0:D} ", (Math.Round(Model.FatsPerDay.Values.Average()).ToString().Replace(',', '.')))) grams", color: "#dc3545" },
+                            { z: parseFloat(proteinsGrams.toFixed(2)), y: parseFloat(proteinsPercentage.toFixed(2)), label: "Proteins", color: "#0d6efd" },
+                            { z: parseFloat(carbohydratesGrams.toFixed(2)), y: parseFloat(carbohydratesPercentage.toFixed(2)), label: "Carbohydrates", color: "#ffc107" },
+                            { z: parseFloat(fatsGrams.toFixed(2)), y: parseFloat(fatsPercentage.toFixed(2)), label: "Fats", color: "#dc3545" },
                     ],
                 }
             ]
