@@ -128,7 +128,10 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
             ViewData["FitnessDietId"] = new SelectList(_context.FitnessDiets, "DietId", "DietId", dailyMealRow.FitnessDietId);
             ViewData["ProductId"] = new SelectList(_context.Foods, "FoodId", "FoodId", dailyMealRow.ProductId);
-            return View(dailyMealRow);
+            DailyMealViewModel model = new DailyMealViewModel();
+            model.DailyMealRow = dailyMealRow;
+            model.DailyMealRows = _context.DailyMealRows.ToList();
+            return View(model);
         }
 
         // GET: DailyMealRows/Delete/5
