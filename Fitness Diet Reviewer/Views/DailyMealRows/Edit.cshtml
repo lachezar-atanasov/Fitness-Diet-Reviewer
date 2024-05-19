@@ -19,11 +19,13 @@
                     @{
                         if (ViewData["FoodName"] != null && ViewData["FoodId"] != null)
                         {
-                            @ViewItems.CreateSearchBox("ProductId", "foodInput", "/Foods/Search", ViewData["FoodName"].ToString(), ViewData["FoodId"].ToString());
+                                @ViewItems.CreateSearchBox("DailyMealRow.ProductId", "foodInput", "/Foods/Search", ViewData["FoodName"].ToString(), ViewData["FoodId"].ToString())
+                                ;
                         }
                         else
                         {
-                            @ViewItems.CreateSearchBox("ProductId", "foodInput", "/Foods/Search");
+                                @ViewItems.CreateSearchBox("DailyMealRow.ProductId", "foodInput", "/Foods/Search")
+                                ;
                         }
                     }
                         <span asp-validation-for="DailyMealRow.ProductId" class="text-danger"></span>
