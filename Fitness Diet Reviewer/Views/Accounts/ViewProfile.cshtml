@@ -11,12 +11,16 @@
         <div class="container-fluid">
 
             @{
-                if (User.Identity.Name == Model.ApplicationUser.UserName)
+                if (User.IsInRole("Administrator") || User.Identity.Name == Model.ApplicationUser.UserName)
                 {
                     bool isFitnessInstructor = await UserManager.IsInRoleAsync(Model.ApplicationUser, "Fitness Instructor");
-                    if (!isFitnessInstructor)
+                    if (!isFitnessInstructor && !User.IsInRole("Administrator"))
                     {
                         await Html.RenderPartialAsync("_EdittableFitnessTablePartial", Model);
+                    }
+                    else
+                    {
+                        await Html.RenderPartialAsync("_ViewOnlyFitnessTablePartial", Model);
                     }
 
                     await Html.RenderPartialAsync("_EditProfilePartial", Model);
