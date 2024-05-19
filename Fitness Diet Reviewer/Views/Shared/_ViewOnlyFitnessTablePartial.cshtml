@@ -198,19 +198,6 @@
                         </tr>
                     }
                     <tr>
-                        <th><a asp-controller="DailyMealRows" asp-action="Create" class="text-decoration-none text-black"><div>Add new</div></a></th>
-                        @{
-                            foreach (var day in Model.DaysOfWeek)
-                            {
-                                <th>
-                                    <a class="foodlink">
-                                        <div class="addbutton">Add meal here</div>
-                                    </a>
-                                </th>
-                            }
-                        }
-                    </tr>
-                    <tr>
                         <th></th>
                         @{
                             foreach (var day in Model.DaysOfWeek)
