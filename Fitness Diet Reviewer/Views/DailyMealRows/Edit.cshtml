@@ -1,5 +1,5 @@
 ﻿@using Fitness_Diet_Reviewer.ViewModels
-@model Fitness_Diet_Reviewer.Models.DailyMealRow
+@model Fitness_Diet_Reviewer.ViewModels.DailyMealViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -7,11 +7,11 @@
 
 <div class="card">
     <div class="card-body text-center p-sm-5">
-        <h2 class="font-weight-bold mb-3">Edit meal - @Model.DayOfWeek - @Model.EatTime</h2>
+        <h2 class="font-weight-bold mb-3">Edit meal - @Model.DailyMealRow.DayOfWeek - @Model.DailyMealRow.EatTime</h2>
         <div class="text-center">
         <form class="w-50 m-auto align-content-center" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="DailyMealRowId" />
+                <input type="hidden" asp-for="DailyMealRow.DailyMealRowId" />
                 <div class="row">
                     <div class="col-md-6 mb-3">
 
@@ -26,21 +26,21 @@
                             @ViewItems.CreateSearchBox("ProductId", "foodInput", "/Foods/Search");
                         }
                     }
-                        <span asp-validation-for="ProductId" class="text-danger"></span>
+                        <span asp-validation-for="DailyMealRow.ProductId" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
 
-                    <label asp-for="AmountInGrams" class="fw-bold control-label">Quantity in Grams</label>
-                        <input asp-for="AmountInGrams" value="@String.Format("{0:0.##}", Model.AmountInGrams)" class="form-control text-center" placeholder="Amount in grams" />
-                        <span asp-validation-for="AmountInGrams" class="text-danger"></span>
+                        <label asp-for="DailyMealRow.AmountInGrams" class="fw-bold control-label">Quantity in Grams</label>
+                        <input asp-for="DailyMealRow.AmountInGrams" value="@String.Format("{0:0.##}", Model.DailyMealRow.AmountInGrams)" class="form-control text-center" placeholder="Amount in grams" />
+                        <span asp-validation-for="DailyMealRow.AmountInGrams" class="text-danger"></span>
 
                     </div>
                 </div>
             <div class="row">
 
                 <div class="col mb-3">
-                    <label asp-for="DayOfWeek" class="control-label text-center fw-bold @(ViewData["DayOfWeek"] != null ? "d-none" : "")">Day of week</label>
-                    <select asp-for="DayOfWeek" id="dayOfWeek" class="form-control text-center">
+                        <label asp-for="DailyMealRow.DayOfWeek" class="control-label text-center fw-bold @(ViewData["DayOfWeek"] != null ? "d-none" : "")">Day of week</label>
+                        <select asp-for="DailyMealRow.DayOfWeek" id="dayOfWeek" class="form-control text-center">
                         <option value="" disabled>Select Day</option>
                         <option value="Monday">Monday</option>
                         <option value="Tuesday">Tuesday</option>
@@ -52,25 +52,52 @@
                     </select>
 
                     <script>
-                        document.getElementById('dayOfWeek').value = '@Model.DayOfWeek';
+                            document.getElementById('dayOfWeek').value = '@Model.DailyMealRow.DayOfWeek';
                     </script>
-                    <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+                        <span asp-validation-for="DailyMealRow.DayOfWeek" class="text-danger"></span>
                 </div>
             </div>
             <div class="col mb-3">
-                <label asp-for="EatTime" class="fw-bold control-label">Time for eating</label>
-                <input asp-for="EatTime" type="time" class="form-control text-center" id="timeInput" step="300" min="00:00" max="23:59">
-                <span asp-validation-for="EatTime" class="text-danger"></span>
+                    <label asp-for="DailyMealRow.EatTime" class="fw-bold control-label">Time for eating</label>
+                    <input asp-for="DailyMealRow.EatTime" type="time" class="form-control text-center" id="timeInput" step="300" min="00:00" max="23:59">
+                    <span asp-validation-for="DailyMealRow.EatTime" class="text-danger"></span>
 
             </div>
 
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col">
                         <button class="btn btn-primary w-100" type="submit">Edit</button>
                     </div>
-                    <div class="col-6">
-                        <a asp-action="Delete" asp-route-id="@Model.DailyMealRowId" class="btn btn-danger w-100">Delete</a>
+                    <div class="col">
+                        <a asp-action="Delete" asp-route-id="@Model.DailyMealRow.DailyMealRowId" class="btn btn-danger w-100">Delete</a>
                     </div>
+                    @{
+                        var rowsCount = Model.DailyMealRows.Count(x => x.EatTime == Model.DailyMealRow.EatTime && x.DayOfWeek == Model.DailyMealRow.DayOfWeek);
+                        switch (rowsCount)
+                        {
+                            case 1:
+                                <div class="col">
+                                    <a asp-controller="DailyMealRows" asp-action="Create" asp-route-EatTime="@Model.DailyMealRow.EatTime" asp-route-DayOfWeek="@Model.DailyMealRow.DayOfWeek" class="btn btn-primary w-100">
+                                        Add second row
+                                    </a>
+                                </div>
+                                break;
+                            case 2:
+                                <div class="col">
+                                    <a asp-controller="DailyMealRows" asp-action="Create" asp-route-EatTime="@Model.DailyMealRow.EatTime" asp-route-DayOfWeek="@Model.DailyMealRow.DayOfWeek" class="btn btn-primary w-100">
+                                        Add third row
+                                    </a>
+                                </div>
+                                break;
+                            case 3:
+                                <div class="col">
+                                    <a asp-controller="DailyMealRows" asp-action="Create" asp-route-EatTime="@Model.DailyMealRow.EatTime" asp-route-DayOfWeek="@Model.DailyMealRow.DayOfWeek" class="btn btn-primary w-100">
+                                        Add forth row
+                                    </a> 
+                                    </div>
+                                break;
+                        }
+                    }
                 </div>
         </form>
         </div>

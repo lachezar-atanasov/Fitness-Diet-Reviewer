@@ -65,12 +65,15 @@ namespace Fitness_Diet_Reviewer.Controllers
                 return NotFound();
             }
 
+            DailyMealViewModel model = new DailyMealViewModel();
             var dailyMealRow = await _context.DailyMealRows.FindAsync(id);
             if (dailyMealRow == null)
             {
                 return NotFound();
             }
 
+            var diet = _context.FitnessDiets.FirstOrDefault(x => x.DietId == dailyMealRow.FitnessDietId);
+            dailyMealRow.FitnessDiet = diet;
             ViewData["FitnessDietId"] = new SelectList(_context.FitnessDiets, "DietId", "DietId", dailyMealRow.FitnessDietId);
             ViewData["ProductId"] = new SelectList(_context.Foods, "FoodId", "FoodId", dailyMealRow.ProductId);
             var currFood = _context.Foods.FirstOrDefault(x => x.FoodId == dailyMealRow.ProductId);
@@ -79,7 +82,12 @@ namespace Fitness_Diet_Reviewer.Controllers
                 ViewData["FoodName"] = currFood.FoodName;
                 ViewData["FoodId"] = currFood.FoodId;
             }
-            return View(dailyMealRow);
+
+            var dailyMealRows = _context.DailyMealRows.ToList();
+            model.DailyMealRow=dailyMealRow;
+            model.DailyMealRows = dailyMealRows;
+
+            return View(model);
         }
 
         // POST: DailyMealRows/Edit/5
