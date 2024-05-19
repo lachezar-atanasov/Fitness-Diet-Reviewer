@@ -84,10 +84,15 @@
                                                    asp-route-sortOrder="@ViewData["CaloriesSort"]"
                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]">Calories per 100g</a>
                                             </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["RequestUsernameSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Request username</a>
+                                            </th>
                                             @{
                                                 if (User.IsInRole("Administrator") || User.IsInRole("Fitness Instructor"))
                                                 {
-                                                    <th>Username</th>
+                                                    
                                                     <th>Operations</th>
                                                 }
                                             }
@@ -114,10 +119,11 @@
                                                     <td>
                                                         @((food.Carbohydrates * 4) + (food.Fats * 9) + (food.Proteins * 4))
                                                     </td>
+                                                    <td>@UserManager.FindByIdAsync(food.UserId).Result.UserName</td>
                                                     @{
                                                         if (User.IsInRole("Administrator") || User.IsInRole("Fitness Instructor"))
                                                         {
-                                                            <td>@UserManager.FindByIdAsync(food.UserId).Result.UserName</td>
+                                                            
                                                             <td>
                                                                 <a asp-action="AddRequestedFood" asp-route-id="@food.FoodId"><i class="bi bi-plus-circle"></i></a>
                                                                 <a asp-action="RemoveRequestedFood" asp-route-id="@food.FoodId"><i class="bi bi-dash-circle"></i></a>
@@ -158,10 +164,15 @@
                                                    asp-route-sortOrder="@ViewData["CaloriesSort"]"
                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]">Calories per 100g</a>
                                             </th>
+                                            <th>
+                                                <a asp-action="RequestedFoods"
+                                                   asp-route-sortOrder="@ViewData["RequestUsernameSort"]"
+                                                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Request username</a>
+                                            </th>
                                             @{
                                                 if (User.IsInRole("Administrator") || User.IsInRole("Fitness Instructor"))
                                                 {
-                                                    <th>Username</th>
+                                                    
                                                     <th>Operations</th>
                                                 }
                                             }
