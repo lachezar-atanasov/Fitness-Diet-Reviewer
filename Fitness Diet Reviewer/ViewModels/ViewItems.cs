@@ -9,7 +9,7 @@
         public static HtmlString CreateSearchBox(string controller,string className, string dataUrl, string foodName = "Select a food", string productId="")
         {
             var defaultOption = foodName != "Select a food" ? $"<option value='{productId}' selected >{foodName}</option>":
-                "<option value='' selected disabled>"+foodName+"</option>";
+                $"<option value='{productId}' selected disabled>"+foodName+"</option>";
             var html = $@"
             <style>
                 .select2-container {{
