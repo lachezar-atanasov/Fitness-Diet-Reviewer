@@ -11,7 +11,7 @@
         <div class="container-fluid">
 
             @{
-                if (User.IsInRole("Administrator") || User.Identity.Name == Model.ApplicationUser.UserName)
+                if (User.Identity.Name == Model.ApplicationUser.UserName)
                 {
                     bool isFitnessInstructor = await UserManager.IsInRoleAsync(Model.ApplicationUser, "Fitness Instructor");
                     if (!isFitnessInstructor)
