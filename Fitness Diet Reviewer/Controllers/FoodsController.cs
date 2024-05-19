@@ -33,6 +33,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             ViewData["FatsSort"] = sortOrder == "fats" ? "fats_desc" : "fats";
             ViewData["ProteinsSort"] = sortOrder == "proteins" ? "proteins_desc" : "proteins";
             ViewData["CaloriesSort"] = sortOrder == "calories" ? "calories_desc" : "calories";
+            ViewData["RequestUsernameSort"] = sortOrder == "requestUsername" ? "requestUsername_desc" : "requestUsername";
 
             if (searchString != null)
             {
@@ -56,7 +57,8 @@ namespace Fitness_Diet_Reviewer.Controllers
                     f.FoodName.Contains(searchString) ||
                     f.Carbohydrates.ToString().Contains(searchString) ||
                     f.Fats.ToString().Contains(searchString) ||
-                    f.Proteins.ToString().Contains(searchString)
+                    f.Proteins.ToString().Contains(searchString)||
+                    f.User.UserName.ToString().Contains(searchString)
                 );
             }
 
@@ -90,6 +92,12 @@ namespace Fitness_Diet_Reviewer.Controllers
                     break;
                 case "calories_desc":
                     foods = foods.OrderByDescending(f => ((f.Fats * 9) + (f.Carbohydrates * 4) + (f.Proteins * 4)));
+                    break;
+                case "requestUsername":
+                    foods = foods.OrderBy(f => f.User.UserName);
+                    break;
+                case "requestUsername_desc":
+                    foods = foods.OrderByDescending(f => f.User.UserName); 
                     break;
                 // Add cases for other properties as needed
                 default:
