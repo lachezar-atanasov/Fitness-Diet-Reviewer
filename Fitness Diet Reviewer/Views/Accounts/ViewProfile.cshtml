@@ -18,6 +18,10 @@
                     {
                         await Html.RenderPartialAsync("_EdittableFitnessTablePartial", Model);
                     }
+                    else if (User.Identity.Name == Model.ApplicationUser.UserName)
+                    {
+                        await Html.RenderPartialAsync("_EdittableFitnessTablePartial", Model);
+                    }
                     else
                     {
                         await Html.RenderPartialAsync("_ViewOnlyFitnessTablePartial", Model);
