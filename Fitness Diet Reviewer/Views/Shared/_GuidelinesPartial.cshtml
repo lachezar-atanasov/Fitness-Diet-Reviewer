@@ -37,7 +37,7 @@
                             rank = "Master";
                             break;
                     }
-                    @Html.Raw($"<b>{rank}</b> Fitness instructor <b>{instructor.FirstName} {instructor.LastName})</b>:{Environment.NewLine} " +
+                    @Html.Raw($"{rank} instructor <b>({instructor.FirstName} {instructor.LastName})</b>:{Environment.NewLine} " +
                          $"{guideline.Content}")
 
 
