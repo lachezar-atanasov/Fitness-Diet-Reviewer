@@ -189,8 +189,8 @@
                                         }
                                         <li class="page-item @prevDisabled">
                                             <a asp-action="Index"
-                                               asp-route-sortOrder="@ViewData["CurrentSort"]"
                                                asp-route-pageIndex="@(Model.PageIndex - 1)"
+                                               asp-route-sortOrder="@ViewData["CurrentSort"]"
                                                asp-route-currentFilter="@ViewData["CurrentFilter"]"
                                                class="page-link"
                                                aria-label="Previous">
@@ -201,8 +201,8 @@
                                         {
                                             <li class="page-item @(i == Model.PageIndex ? "active" : "")">
                                                 <a asp-action="Index"
-                                                   asp-route-sortOrder="@ViewData["CurrentSort"]"
                                                    asp-route-pageIndex="@i"
+                                                   asp-route-sortOrder="@ViewData["CurrentSort"]"
                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
                                                    class="page-link">
                                                     @i

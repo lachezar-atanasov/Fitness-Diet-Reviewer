@@ -45,6 +45,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;
 
             // Query the database based on the sort order
             var foods = from f in _context.RequestedFoods
@@ -132,6 +133,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;
 
             // Query the database based on the sort order
             var foods = from f in _context.Foods

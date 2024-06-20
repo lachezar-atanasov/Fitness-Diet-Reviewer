@@ -27,7 +27,17 @@
             <div class="form-group">
                 <label asp-for="DayOfWeek" class="control-label fw-bold @(ViewData["DayOfWeek"] != null ? "d-none" : "")">Day of week</label>
                 <select asp-for="DayOfWeek" class="form-control text-center @(ViewData["DayOfWeek"] != null ? "d-none" : "")">
-                    <option value="" disabled selected>Select Day</option>
+                    @{
+                        if (ViewData["EatTime"] == null)
+                        {
+                            <option value="" disabled selected>Select Day</option>
+                        }
+                        else
+                        {
+                            <option value="@ViewData["DayOfWeek"]" disabled selected>Select Day</option>
+                        }
+                    }
+                    
                     <option value="Monday">Monday</option>
                     <option value="Tuesday">Tuesday</option>
                     <option value="Wednesday">Wednesday</option>
@@ -40,8 +50,17 @@
             </div>
             <div class="col mb-3">
                 <label asp-for="EatTime" class="fw-bold control-label @(ViewData["EatTime"] != null ? "d-none" : "")">Time for eating</label>
-                <input asp-for="EatTime" type="time" class="form-control text-center @(ViewData["EatTime"] != null ? "d-none" : "")" id="timeInput" step="300" min="00:00" max="23:59">
-                <span asp-validation-for="EatTime" class="text-danger"></span>
+                @{
+                    if (ViewData["EatTime"] == null)
+                    {
+                        <input asp-for="EatTime" type="time" class="form-control text-center" id="timeInput" step="300" min="00:00" max="23:59">
+                    }
+                    else
+                    {
+                        <input asp-for="EatTime" type="time" value="@ViewData["EatTime"]" class="form-control text-center d-none" id="timeInput" step="300" min="00:00" max="23:59">
+                    }
+                }
+                 <span asp-validation-for="EatTime" class="text-danger"></span>
 
             </div>
             <div class="form-group text-center">

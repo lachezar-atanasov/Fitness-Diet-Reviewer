@@ -93,6 +93,10 @@
     </form>
 </div>
 
+@{
+    await Html.RenderPartialAsync("_ChartPartial", Model);
+}
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
 
@@ -170,7 +174,7 @@
                     </div>
                     <h4 class="small fw-bold">Proteins per day<span class="float-end">Recommended per day</span></h4>
                     <h4 class="small">
-                        @(String.Format("{0:F0}", Model.ProteinsPerDay.Values.Average()))<span class="float-end">@(String.Format("{0:F0}", 1.3m * Model.ApplicationUser.Weight))</span>
+                        @(String.Format("{0:F0}", Model.ProteinsPerDay.Values.Average()))<span class="float-end">@(String.Format("{0:F0}", 1.6m * Model.ApplicationUser.Weight))</span>
                     </h4>
                     <div class="progress progress-sm mb-3">
                         <div class="progress-bar bg-warning" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: @((String.Format("{0:F0}", ((Model.ProteinsPerDay.Values.Average()/(1.3m*Model.ApplicationUser.Weight))*100))))%;"><span class="visually-hidden">40%</span></div>
@@ -187,6 +191,6 @@
 
         </div>
         <div id="chartContainer" style="width:300px;height:300px"></div>
-       
+
     </div>
 </div>
