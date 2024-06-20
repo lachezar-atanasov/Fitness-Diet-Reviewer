@@ -1,0 +1,106 @@
+﻿@model Fitness_Diet_Reviewer.ViewModels.AccountViewModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+
+        <h6 class="text-primary fw-bold m-0">
+            Statistics<span class="text-primary fw-bold m-0 float-end">
+                @{
+                    if (!Model.ProfileIsNotCompleted)
+                    {
+                        <span id="showChart" class="text-primary fw-bold m-0 float-end">
+                            <a>Show chart</a>
+                        </span>
+                        <span id="hideChart" class="text-primary fw-bold m-0 float-end d-none"><a>Hide chart</a></span>
+                    }
+                }
+            </span>
+        </h6>
+
+    </div>
+    <div class="card-body">
+
+        <div id="statisticsContent">
+            @{
+                if ((Model.ApplicationUser.Age == null || Model.ApplicationUser.Gender == null || Model.ApplicationUser.ActivityLevel == null || Model.ApplicationUser.Height == null || Model.ApplicationUser.Weight == null) && User.Identity.Name == Model.ApplicationUser.UserName)
+                {
+                    <div class="text-center"> Complete your body characteristics to get statistics data! </div>
+                }
+                else if (Model.ApplicationUser.Age == null || Model.ApplicationUser.Gender == null || Model.ApplicationUser.ActivityLevel == null || Model.ApplicationUser.Height == null || Model.ApplicationUser.Weight == null)
+                {
+                    <div class="text-center"> No statistics data user must complete the body characteristics! </div>
+                }
+                else
+                {
+                    decimal ages = decimal.Parse(Model.ApplicationUser.Age.ToString());
+                    decimal? BMR = 0;
+                    Model.AverageCaloriesPerDay = (Model.CaloriesPerDay.Values.Average() == 0 ? 1 : Model.CaloriesPerDay.Values.Average());
+                    switch (Model.ApplicationUser.Gender)
+                    {
+                        case "Male":
+                            BMR = ((88.362m + (13.397m * Model.ApplicationUser.Weight) + (4.799m * Model.ApplicationUser.Height)) - (5.677m * ages));
+                            break;
+                        case "Female":
+                            BMR = ((447.593m + (9.247m * Model.ApplicationUser.Weight) + (3.098m * Model.ApplicationUser.Height)) - (4.330m * ages));
+                            break;
+                    }
+
+                    switch (Model.ApplicationUser.ActivityLevel)
+                    {
+                        case "0":
+                            BMR *= 1.2m;
+                            break;
+                        case "1":
+                            BMR *= 1.375m;
+                            break;
+                        case "2":
+                            BMR *= 1.55m;
+                            break;
+                        case "3":
+                            BMR *= 1.725m;
+                            break;
+                        case "4":
+                            BMR *= 1.9m;
+                            break;
+                    }
+
+                    <h4 class="small fw-bold">
+                        Calories from your diet<span class="float-end">Recommended calories</span>
+                    </h4>
+                    <h4 class="small">
+                        @(String.Format("{0:F0}", Model.CaloriesPerDay.Values.Average()))<span class="float-end">@(String.Format("{0:F0}", BMR))</span>
+                    </h4>
+
+
+                    <div class="progress progress-sm mb-3">
+                        <div class="progress-bar bg-danger" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: @(String.Format("{0:F0}", ((Model.CaloriesPerDay.Values.Average()/BMR)*100)))%;"><span class="visually-hidden">20%</span></div>
+                    </div>
+                    <h4 class="small fw-bold">Proteins per day<span class="float-end">Recommended per day</span></h4>
+                    <h4 class="small">
+                        @(String.Format("{0:F0}", Model.ProteinsPerDay.Values.Average()))<span class="float-end">@(String.Format("{0:F0}", 1.6m * Model.ApplicationUser.Weight))</span>
+                    </h4>
+                    <div class="progress progress-sm mb-3">
+                        <div class="progress-bar bg-warning" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: @((String.Format("{0:F0}", ((Model.ProteinsPerDay.Values.Average()/(1.3m*Model.ApplicationUser.Weight))*100))))%;"><span class="visually-hidden">40%</span></div>
+                    </div>
+                    <h4 class="small fw-bold">Percent Carbohydrates<span class="float-end">Recommended percent</span></h4>
+                    <h4 class="small">
+                        @{
+                            var totalGrams = Model.ProteinsPerDay.Values.Sum() + Model.CarbohydratesPerDay.Values.Sum() + Model.FatsPerDay.Values.Sum();
+                            totalGrams = totalGrams == 0 ? 1 : totalGrams;
+                        }
+                        @(String.Format("{0:F0}", (Model.CarbohydratesPerDay.Values.Sum() / totalGrams) * 100))<span class="float-end">40-65%</span>
+                    </h4>
+                    <div class="progress progress-sm mb-3">
+                        <div class="progress-bar bg-primary" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @(String.Format("{0:F0}", ((Model.CarbohydratesPerDay.Values.Sum() / totalGrams) * 100)-40))%;"><span class="visually-hidden">60%</span></div>
+                    </div>
+                }
+            }
+
+        </div>
+        <div id="chartContainer" style="width:300px;height:300px"></div>
+
+    </div>
+</div>
+
