@@ -34,6 +34,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;
 
             var fitnessInsturctorsRoleId = _roleManager.FindByNameAsync("Fitness Instructor").Result.Id;
 
@@ -142,6 +143,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;
 
             var users = from userRole in _context.UserRoles
                         join user in _context.Users on userRole.UserId equals user.Id
@@ -216,6 +218,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;
 
             var users = from userRole in _context.UserRoles
                         join user in _context.Users on userRole.UserId equals user.Id
