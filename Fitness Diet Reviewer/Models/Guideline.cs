@@ -16,6 +16,8 @@ public partial class Guideline
     public string Content { get; set; }
     public string FitnessInstructorId { get; set; }
     public int FitnessDietId { get; set; }
+    public bool? IsLiked { get; set; }
     public virtual FitnessDiet FitnessDiet { get; set; }
     public virtual ApplicationUser FitnessInstructor { get; set; }
+
 }
