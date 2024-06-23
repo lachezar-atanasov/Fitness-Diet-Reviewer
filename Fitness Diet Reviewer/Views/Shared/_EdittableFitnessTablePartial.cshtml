@@ -21,47 +21,68 @@
             </p>
         }
 
-        @{
-            if (Model.Guidelines.Count > 0)
-            {
-                <div class="d-flex align-items-center">
-                    <div class="bg-success rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                    <p class="m-0 text-end">Reviewed</p>
-                </div>
-            }
-            else if (Model.FitnessDiet.Status == "NotReady")
-            {
-                <div class="d-flex align-items-center">
-                    <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                    <form id="statusForm" method="post" action="@Url.Action("ChangeStatus", "Accounts")">
-                        <input type="hidden" name="id" value="@Model.FitnessDiet.DietId">
-                        <select id="statusDropdown" name="newStatus">
-                            <option value="NotReady" selected>Not ready for review</option>
-                            <option value="PendingFeedback">Pending Feedback</option>
-                        </select>
-                    </form>
-                </div>
-            }
-            else if (Model.FitnessDiet.Status == "PendingFeedback")
-            {
-                <div class="d-flex align-items-center">
-                    <div class="bg-warning rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                    <form id="statusForm" method="post" action="@Url.Action("ChangeStatus", "Accounts")">
-                        <input type="hidden" name="id" value="@Model.FitnessDiet.DietId">
-                        <select id="statusDropdown" name="newStatus">
-                            <option value="NotReady">Not ready for review</option>
-                            <option value="PendingFeedback" selected>Pending Feedback</option>
-                        </select>
-                    </form>
-                </div>
-            }
-        }
+       <div id="statusIndicator"></div>
     </div>
     <script>
-        // Automatically submit form when dropdown selection changes
-        document.getElementById('statusDropdown').addEventListener('change', function () {
-            document.getElementById('statusForm').submit();
+        document.addEventListener('DOMContentLoaded', function () {
+            // Replace with the actual id of the FitnessDiet
+            const fitnessDietId = '@Model.FitnessDiet.DietId';
+            updateStatusIndicator(fitnessDietId); // Initial call to fetch and update status indicator
         });
+
+        function updateStatusIndicator(fitnessDietId) {
+            fetch(`/Accounts/GetStatusIndicatorData?id=${fitnessDietId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const statusIndicatorContainer = document.getElementById('statusIndicator');
+                    statusIndicatorContainer.innerHTML = ''; // Clear previous content
+
+                    console.log(data);
+                    if (data.isReviewed) {
+                        const reviewedDiv = document.createElement('div');
+                        reviewedDiv.classList.add('d-flex', 'align-items-center');
+                        reviewedDiv.innerHTML = `
+                            <div class="bg-success rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                            <p class="m-0 text-end">Reviewed</p>
+                        `;
+                        statusIndicatorContainer.appendChild(reviewedDiv);
+                    } else if (data.status === 'NotReady') {
+                        // Render Not Ready status with form
+                        const notReadyDiv = document.createElement('div');
+                        notReadyDiv.classList.add('d-flex', 'align-items-center');
+                        notReadyDiv.innerHTML = `
+                            <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                            <form id="statusForm" method="post" action="/Accounts/ChangeStatus">
+                                <input type="hidden" name="id" value="${data.dietId}">
+                                <select id="statusDropdown" name="newStatus">
+                                    <option value="NotReady" selected>Not ready for review</option>
+                                    <option value="PendingFeedback">Pending Feedback</option>
+                                </select>
+                            </form>
+                        `;
+                        statusIndicatorContainer.appendChild(notReadyDiv);
+                    } else if (data.status === 'PendingFeedback') {
+                        // Render Pending Feedback status with form
+                        const pendingFeedbackDiv = document.createElement('div');
+                        pendingFeedbackDiv.classList.add('d-flex', 'align-items-center');
+                        pendingFeedbackDiv.innerHTML = `
+                            <div class="bg-warning rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                            <form id="statusForm" method="post" action="/Accounts/ChangeStatus">
+                                <input type="hidden" name="id" value="${data.dietId}">
+                                <select id="statusDropdown" name="newStatus">
+                                    <option value="NotReady">Not ready for review</option>
+                                    <option value="PendingFeedback" selected>Pending Feedback</option>
+                                </select>
+                            </form>
+                        `;
+                        statusIndicatorContainer.appendChild(pendingFeedbackDiv);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching status indicator data:', error);
+                });
+        }
+
     </script>
     <div class="card-body">
         <link rel="stylesheet" href="~/css/table.css" />
@@ -285,6 +306,7 @@
                 });
             });
         </script>
+
     </div>
 </div>
 

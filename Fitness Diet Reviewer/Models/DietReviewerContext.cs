@@ -40,6 +40,7 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
     {
         base.OnModelCreating(modelBuilder);
 
+
         modelBuilder.Entity<ApplicationUser>().ToTable("AspNetUsers");
 
         modelBuilder.Entity<ApplicationUser>()
@@ -92,6 +93,7 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
             .WithOne(diet => diet.User)
             .HasForeignKey<FitnessDiet>(diet => diet.UserId)
             .IsRequired();
+
 
         modelBuilder.Entity<Guideline>(entity =>
         {

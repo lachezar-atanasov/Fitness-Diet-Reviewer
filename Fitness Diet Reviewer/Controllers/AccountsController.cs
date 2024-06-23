@@ -3,6 +3,7 @@ using Fitness_Diet_Reviewer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fitness_Diet_Reviewer.Controllers
 {
@@ -18,6 +19,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
+
         public async Task<IActionResult> FitnessInstructors(string sortOrder, string currentFilter, string searchString, int? pageIndex, int pageSize = 10)
         {
 
@@ -72,6 +74,68 @@ namespace Fitness_Diet_Reviewer.Controllers
             return View(paginatedList);
         }
 
+        [Authorize]
+        public async Task<IActionResult> GetStatusIndicatorData(int id)
+        {
+            // Replace with your actual logic to determine the status
+            var fitnessDiet = _context.FitnessDiets
+                .Include(x=>x.Guidelines)
+                .FirstOrDefault(x => x.DietId == id);
+            if (fitnessDiet == null)
+            {
+                return NotFound(); // Handle scenario where FitnessDiet with the given id is not found
+            }
+
+            var newIsReviewed = !fitnessDiet.Guidelines.All(x => x.IsLiked == false || x.IsLiked == null);
+            if (newIsReviewed)
+            {
+                fitnessDiet.Status = "Reviewed";
+                
+            }
+            else
+            {
+                fitnessDiet.Status = "PendingFeedback";
+            }
+
+            _context.SaveChanges();
+
+            var model = new
+            {
+                isReviewed = newIsReviewed,
+                status = fitnessDiet.Status,
+                dietId = fitnessDiet.DietId
+            };
+
+            return Json(model);
+        }
+        [Authorize]
+        public async Task<IActionResult> SetGuidelineStatus(int id, bool? isLiked)
+        {
+            var guidelineToChange = _context.Guideline
+                .Include(x=>x.FitnessDiet)
+                .Include(x=>x.FitnessDiet.Guidelines)
+                .FirstOrDefault(x => x.GuidelineId == id);
+            if (guidelineToChange == null)
+            {
+                return NotFound();
+            }
+
+            var currUser = await _userManager.FindByIdAsync(guidelineToChange.FitnessDiet.UserId);
+            if (currUser == null)
+            {
+                return NotFound();
+            }
+
+            guidelineToChange.IsLiked = isLiked;
+
+            if (guidelineToChange.FitnessDiet.Guidelines.All(x => x.IsLiked == false || x.IsLiked == null))
+            {
+                guidelineToChange.FitnessDiet.Status = "PendingFeedback";
+            }
+                _context.SaveChanges();
+
+            return Json(new { success = true, userName = currUser.UserName });
+        }
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Edit(string? description, string name, string? weight, string? height, string? gender, string? age, string? activity, string? first_name, string? last_name)
@@ -363,28 +427,33 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+            [Authorize]
             [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> RemoveGuideline(string id)
-        {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x => x.DietId == int.Parse(id));
-            var guidelines = _context.Guideline.FirstOrDefault(x => x.FitnessDietId == int.Parse(id) && (x.FitnessInstructorId == user.Id || User.IsInRole("Administrator"))); 
-            var currUser = await _userManager.FindByIdAsync(fitnessDiets.UserId);
-            if (guidelines!=null)
-            { 
-                _context.Remove(guidelines);
-                _context.SaveChanges();
-                if (fitnessDiets.Guidelines.Count == 0)
+            public async Task<IActionResult> RemoveGuideline(string id)
+            {
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                
+                var guidelineToRemove = _context.Guideline
+                    .FirstOrDefault(x => x.FitnessDietId == int.Parse(id) && (x.FitnessInstructorId == user.Id || User.IsInRole("Administrator")));
+
+                if (guidelineToRemove != null)
                 {
-                    fitnessDiets.Status = "PendingFeedback";
-                    _context.Update(fitnessDiets);
-                    await _context.SaveChangesAsync();
+                    var fitnessDietOfGuideline = _context.FitnessDiets
+                        .Include(x => x.Guidelines)
+                        .FirstOrDefault(x => x.DietId == guidelineToRemove.FitnessDietId);
+                _context.Remove(guidelineToRemove);
+                    _context.SaveChanges();
+                    if (fitnessDietOfGuideline.Guidelines.Count == 0)
+                    {
+                        fitnessDietOfGuideline.Status = "PendingFeedback";
+                        _context.Update(fitnessDietOfGuideline);
+                        await _context.SaveChangesAsync();
+                    }
+                    return Json(new { success = true });
                 }
+
+                return Json(new { success = false });
             }
-            
-            return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName});
-        }
 
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Promote([FromRoute(Name = "id")] string name)
