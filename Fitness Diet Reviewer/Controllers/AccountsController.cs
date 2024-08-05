@@ -2,24 +2,26 @@
 using Fitness_Diet_Reviewer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fitness_Diet_Reviewer.Controllers
 {
+    [Authorize]
     public class AccountsController : Controller
     {
         private readonly DietReviewerContext _context;
 
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        
         public AccountsController(DietReviewerContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
         }
-
         public async Task<IActionResult> FitnessInstructors(string sortOrder, string currentFilter, string searchString, int? pageIndex, int pageSize = 10)
         {
 
@@ -74,7 +76,6 @@ namespace Fitness_Diet_Reviewer.Controllers
             return View(paginatedList);
         }
 
-        [Authorize]
         public async Task<IActionResult> GetStatusIndicatorData(int id)
         {
             // Replace with your actual logic to determine the status
@@ -108,9 +109,9 @@ namespace Fitness_Diet_Reviewer.Controllers
 
             return Json(model);
         }
-        [Authorize]
         public async Task<IActionResult> SetGuidelineStatus(int id, bool? isLiked)
         {
+
             var guidelineToChange = _context.Guideline
                 .Include(x=>x.FitnessDiet)
                 .Include(x=>x.FitnessDiet.Guidelines)
@@ -121,7 +122,7 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
 
             var currUser = await _userManager.FindByIdAsync(guidelineToChange.FitnessDiet.UserId);
-            if (currUser == null)
+            if (currUser == null || currUser.FirstName!=User.Identity.Name)
             {
                 return NotFound();
             }
@@ -137,7 +138,6 @@ namespace Fitness_Diet_Reviewer.Controllers
             return Json(new { success = true, userName = currUser.UserName });
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Edit(string? description, string name, string? weight, string? height, string? gender, string? age, string? activity, string? first_name, string? last_name)
         {
             if (ModelState.IsValid)
@@ -186,8 +186,6 @@ namespace Fitness_Diet_Reviewer.Controllers
             TempData["Message"] = "Validation failed. Please check your input.";
             return RedirectToAction("ViewProfile", "Accounts");
         }
-
-        [Authorize]
         public async Task<IActionResult> UsersList(string sortOrder, string currentFilter, string searchString, int? pageIndex, int pageSize = 10)
         {
 
@@ -262,7 +260,6 @@ namespace Fitness_Diet_Reviewer.Controllers
 
             return View(paginatedList);
         }
-        [Authorize]
         public async Task<IActionResult> FitnessDietsList(string sortOrder, string currentFilter, string searchString, int? pageIndex, int pageSize = 10)
         {
 
@@ -339,9 +336,6 @@ namespace Fitness_Diet_Reviewer.Controllers
 
             return View(paginatedList);
         }
-
-
-        [Authorize]
         public IActionResult ViewProfile([FromRoute(Name = "id")] string name)
         {
             if (!_context.Users.Any(x => x.UserName == name))
@@ -404,15 +398,14 @@ namespace Fitness_Diet_Reviewer.Controllers
                 FitnessDietId = int.Parse(id),
                 FitnessInstructorId = user.Id
             };
-            _context.Guideline.AddAsync(gudeilineToAdd);
-            _context.SaveChanges();
+            await _context.Guideline.AddAsync(gudeilineToAdd);
+            await _context.SaveChangesAsync();
             fitnessDiets.Status = "Reviewed";
             _context.Update(fitnessDiets);
             await _context.SaveChangesAsync();
             return RedirectToAction("ViewProfile", "Accounts", new { id = currUser.UserName });
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> ChangeStatus(int id, string newStatus)
         {
             var fitnessDiets = _context.FitnessDiets.FirstOrDefault(x => x.DietId == id);
@@ -427,14 +420,13 @@ namespace Fitness_Diet_Reviewer.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-            [Authorize]
-            [HttpPost]
-            public async Task<IActionResult> RemoveGuideline(string id)
+        [HttpPost] 
+        public async Task<IActionResult> RemoveGuideline(string id)
             {
                 var user = await _userManager.FindByNameAsync(User.Identity.Name);
                 
                 var guidelineToRemove = _context.Guideline
-                    .FirstOrDefault(x => x.FitnessDietId == int.Parse(id) && (x.FitnessInstructorId == user.Id || User.IsInRole("Administrator")));
+                    .FirstOrDefault(x => x.GuidelineId == int.Parse(id));
 
                 if (guidelineToRemove != null)
                 {
@@ -490,7 +482,6 @@ namespace Fitness_Diet_Reviewer.Controllers
             return RedirectToAction("ViewProfile", "Accounts", new { id = user.UserName});
 
         }
-
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Demote([FromRoute(Name = "id")] string name)
         {

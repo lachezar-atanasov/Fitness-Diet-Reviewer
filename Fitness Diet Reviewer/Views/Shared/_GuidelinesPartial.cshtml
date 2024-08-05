@@ -50,21 +50,28 @@
                                             @Html.Raw($"{guideline.Content}")
                                         </div>
                                         <div class="col-md-8 d-flex justify-content-center align-items-center">
-                                    <button class="btn btn-like me-3 @{
-                                if (guideline.IsLiked == true) {
-                                <text>filled</text>
- }
-    }" id="likeButton" data-fitnessid="@guideline.FitnessDietId" data-id="@guideline.GuidelineId" data-liked="true">
+                                            @{
+                                        var currUser = await UserManager.FindByIdAsync(guideline.FitnessDiet.UserId);
+                                        if (currUser.FirstName == User.Identity.Name)
+                                        {
+                                            <button class="btn sbutton btn-like me-3 @{
+                                                                                         if (guideline.IsLiked == true) {
+                                                                                             <text>filled</text>
+                                                                                         }
+                                                                                     }" id="likeButton" data-fitnessid="@guideline.FitnessDietId" data-id="@guideline.GuidelineId" data-liked="true">
                                                 <i class="bi bi-hand-thumbs-up-fill"></i>
                                             </button>
-                                    <button class="btn btn-dislike @{
-                                if (guideline.IsLiked == false) {
-                                <text>filled</text>
- }
-    }" id="dislikeButton" data-fitnessid="@guideline.FitnessDietId" data-id="@guideline.GuidelineId" data-liked="false">
+                                            <button class="btn sbutton btn-dislike @{
+                                                                                       if (guideline.IsLiked == false) {
+                                                                                           <text>filled</text>
+                                                                                       }
+                                                                                   }" id="dislikeButton" data-fitnessid="@guideline.FitnessDietId" data-id="@guideline.GuidelineId" data-liked="false">
                                                 <i class="bi bi-hand-thumbs-down-fill"></i>
                                             </button>
-                                            <button class="btn btn-remove ms-3" data-id="@guideline.GuidelineId" data-fitnessid="@guideline.FitnessDietId">
+                                        }
+                                        }
+
+                                    <button class="btn sbutton btn-remove ms-3" data-id="@guideline.GuidelineId" data-fitnessid="@guideline.FitnessDietId">
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="x-icon">
                                                     <line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                                                     <line x1="5" y1="19" x2="19" y2="5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
@@ -107,6 +114,24 @@ else
         </div>
     </div>
 }
+
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this guideline?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .btn-like, .btn-dislike {
@@ -158,29 +183,23 @@ else
 </style>
 <script>
     document.addEventListener('click', async function (event) {
-        const button = event.target.closest('.btn'); // Find the closest parent button element
-        if (!button) return; // Exit if clicked element is not a button
+        const button = event.target.closest('.btn');
+        if (!button) return;
 
         const guidelineId = button.getAttribute('data-id');
         const fitnessDietId = button.getAttribute('data-fitnessid');
         let isLiked = null;
 
         if (button.classList.contains('btn-like')) {
-            // If the like button is clicked
             if (button.classList.contains('filled')) {
-                // If it's already filled, we want to unclick it
                 isLiked = null;
             } else {
-                // Otherwise, we want to like
                 isLiked = true;
             }
         } else if (button.classList.contains('btn-dislike')) {
-            // If the dislike button is clicked
             if (button.classList.contains('filled')) {
-                // If it's already filled, we want to unclick it
                 isLiked = null;
             } else {
-                // Otherwise, we want to dislike
                 isLiked = false;
             }
         }
@@ -188,8 +207,8 @@ else
         const isRemove = button.classList.contains('btn-remove');
 
         if (isRemove) {
-            await removeGuideline(button, guidelineId);
-        } else {
+            showDeleteConfirmationModal(button, guidelineId);
+        } else if (button.classList.contains('sbutton')) {
             await toggleGuidelineStatus(button, guidelineId, isLiked);
         }
 
@@ -218,13 +237,11 @@ else
             });
             const data = await response.json();
             if (data.success) {
-                // Remove 'filled' class from both buttons
                 const likeButton = document.querySelector(`#likeButton[data-id="${guidelineId}"]`);
                 const dislikeButton = document.querySelector(`#dislikeButton[data-id="${guidelineId}"]`);
                 likeButton.classList.remove('filled');
                 dislikeButton.classList.remove('filled');
 
-                // Add 'filled' class to the clicked button if necessary
                 if (isLiked === true) {
                     likeButton.classList.add('filled');
                 } else if (isLiked === false) {
@@ -250,7 +267,7 @@ else
             });
             const data = await response.json();
             if (data.success) {
-                button.closest('.d-flex').remove(); // Remove the guideline element from the DOM
+                button.closest('.container').remove();
             } else {
                 alert('Failed to remove guideline.');
             }
@@ -260,15 +277,23 @@ else
         }
     }
 
+    function showDeleteConfirmationModal(button, guidelineId) {
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+        document.getElementById('confirmDeleteButton').onclick = async function () {
+            await removeGuideline(button, guidelineId);
+            deleteModal.hide();
+        };
+        deleteModal.show();
+    }
+
     function updateStatusIndicator(fitnessDietId) {
         fetch(`/Accounts/GetStatusIndicatorData?id=${fitnessDietId}`)
             .then(response => response.json())
             .then(data => {
                 const statusIndicatorContainer = document.getElementById('statusIndicator');
-                statusIndicatorContainer.innerHTML = ''; // Clear previous content
+                statusIndicatorContainer.innerHTML = '';
 
                 if (data.isReviewed) {
-                    // Render Reviewed status
                     const reviewedDiv = document.createElement('div');
                     reviewedDiv.classList.add('d-flex', 'align-items-center');
                     reviewedDiv.innerHTML = `
@@ -277,7 +302,6 @@ else
                     `;
                     statusIndicatorContainer.appendChild(reviewedDiv);
                 } else if (data.status === 'NotReady') {
-                    // Render Not Ready status with form
                     const notReadyDiv = document.createElement('div');
                     notReadyDiv.classList.add('d-flex', 'align-items-center');
                     notReadyDiv.innerHTML = `
@@ -292,7 +316,6 @@ else
                     `;
                     statusIndicatorContainer.appendChild(notReadyDiv);
                 } else if (data.status === 'PendingFeedback') {
-                    // Render Pending Feedback status with form
                     const pendingFeedbackDiv = document.createElement('div');
                     pendingFeedbackDiv.classList.add('d-flex', 'align-items-center');
                     pendingFeedbackDiv.innerHTML = `
