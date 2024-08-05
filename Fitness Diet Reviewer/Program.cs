@@ -1,6 +1,7 @@
 using Fitness_Diet_Reviewer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,9 +50,10 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
+var connectionString = builder.Configuration.GetConnectionString("DietAuditorContext");
 
 builder.Services.AddDbContext<DietReviewerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DietAuditorContext")));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 var app = builder.Build();
 
