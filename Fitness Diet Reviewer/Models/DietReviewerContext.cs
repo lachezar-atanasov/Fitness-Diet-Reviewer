@@ -34,7 +34,7 @@ public partial class DietReviewerContext : IdentityDbContext<ApplicationUser, Id
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
         var connectionString = configuration.GetConnectionString("DietAuditorContext")
-            .Replace("{{YourPassword}}", Environment.GetEnvironmentVariable("DB_PASSWORD", EnvironmentVariableTarget.User));
+            .Replace("{{YourPassword}}", Environment.GetEnvironmentVariable("DB_PASSWORD"));
         optionsBuilder.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
