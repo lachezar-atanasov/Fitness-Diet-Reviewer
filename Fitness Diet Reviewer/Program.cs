@@ -50,7 +50,11 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
-var connectionString = builder.Configuration.GetConnectionString("DietAuditorContext");
+builder.Configuration.AddJsonFile("appsettings.json")
+                     .AddEnvironmentVariables();
+
+var connectionString = builder.Configuration.GetConnectionString("DietAuditorContext")
+    .Replace("{{YourPassword}}", Environment.GetEnvironmentVariable("DB_PASSWORD"));
 
 builder.Services.AddDbContext<DietReviewerContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
