@@ -54,7 +54,7 @@ builder.Configuration.AddJsonFile("appsettings.json")
                      .AddEnvironmentVariables();
 
 var connectionString = builder.Configuration.GetConnectionString("DietAuditorContext")
-    .Replace("{{YourPassword}}", Environment.GetEnvironmentVariable("DB_PASSWORD"));
+    .Replace("{{YourPassword}}", Environment.GetEnvironmentVariable("DB_PASSWORD", EnvironmentVariableTarget.User));
 
 builder.Services.AddDbContext<DietReviewerContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
