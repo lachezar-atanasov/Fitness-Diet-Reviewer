@@ -53,7 +53,7 @@ builder.Services.AddApplicationInsightsTelemetry();
 builder.Configuration.AddJsonFile("appsettings.json")
                      .AddEnvironmentVariables();
 
-var connectionString = builder.Configuration.GetConnectionString("DietAuditorContext")
+var connectionString = builder.Configuration.GetConnectionString("DietAuditorContext")?
     .Replace("{{YourPassword}}", Environment.GetEnvironmentVariable("DB_PASSWORD"));
 
 builder.Services.AddDbContext<DietReviewerContext>(options =>
