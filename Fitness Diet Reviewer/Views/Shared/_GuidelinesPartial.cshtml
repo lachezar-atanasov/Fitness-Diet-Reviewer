@@ -308,7 +308,7 @@ else
                         <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
                         <form id="statusForm" method="post" action="/Accounts/ChangeStatus">
                             <input type="hidden" name="id" value="${data.dietId}">
-                            <select id="statusDropdown" name="newStatus">
+                                <select id="statusDropdown" name="newStatus" onChange="dropdownSubmit()">
                                 <option value="NotReady" selected>Not ready for review</option>
                                 <option value="PendingFeedback">Pending Feedback</option>
                             </select>
@@ -322,7 +322,7 @@ else
                         <div class="bg-warning rounded-circle me-2" style="width: 10px; height: 10px;"></div>
                         <form id="statusForm" method="post" action="/Accounts/ChangeStatus">
                             <input type="hidden" name="id" value="${data.dietId}">
-                            <select id="statusDropdown" name="newStatus">
+                                <select id="statusDropdown" name="newStatus" onChange="dropdownSubmit()">
                                 <option value="NotReady">Not ready for review</option>
                                 <option value="PendingFeedback" selected>Pending Feedback</option>
                             </select>

@@ -93,10 +93,6 @@ namespace Fitness_Diet_Reviewer.Controllers
                 fitnessDiet.Status = "Reviewed";
                 
             }
-            else
-            {
-                fitnessDiet.Status = "PendingFeedback";
-            }
 
             _context.SaveChanges();
 

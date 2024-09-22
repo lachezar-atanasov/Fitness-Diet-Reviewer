@@ -6,83 +6,49 @@
 }
 
 <div id="fitness-diet" class="card shadow mb-2">
-    <div class="card-header py-3 d-flex justify-content-between">
-        @if (User.IsInRole("Administrator") && Model.FitnessDiet.UserId != currUserSearch.Id)
-        {
-            <p class="text-primary m-0 fw-bold">
-                @Model.ApplicationUser.UserName
-                - Fitness Diet
-            </p>
-        }
-        else
-        {
-            <p class="text-primary m-0 fw-bold">
-                Your personal fitness diet
-            </p>
-        }
+<div class="card-header py-3 d-flex justify-content-between">
+    @if (User.IsInRole("Administrator") && Model.FitnessDiet.UserId != currUserSearch.Id)
+    {
+        <p class="text-primary m-0 fw-bold">
+            @Model.ApplicationUser.UserName
+            - Fitness Diet
+        </p>
+    }
+    else
+    {
+        <p class="text-primary m-0 fw-bold">
+            Your personal fitness diet
+        </p>
+    }
 
-       <div id="statusIndicator"></div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Replace with the actual id of the FitnessDiet
-            const fitnessDietId = '@Model.FitnessDiet.DietId';
-            updateStatusIndicator(fitnessDietId); // Initial call to fetch and update status indicator
-        });
+    <div id="statusIndicator"></div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Replace with the actual id of the FitnessDiet
+    const fitnessDietId = '@Model.FitnessDiet.DietId';
+    updateStatusIndicator(fitnessDietId); // Initial call to fetch and update status indicator
+    });
 
-        function updateStatusIndicator(fitnessDietId) {
-            fetch(`/Accounts/GetStatusIndicatorData?id=${fitnessDietId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const statusIndicatorContainer = document.getElementById('statusIndicator');
-                    statusIndicatorContainer.innerHTML = ''; // Clear previous content
-
-                    console.log(data);
-                    if (data.isReviewed) {
-                        const reviewedDiv = document.createElement('div');
-                        reviewedDiv.classList.add('d-flex', 'align-items-center');
-                        reviewedDiv.innerHTML = `
-                            <div class="bg-success rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                            <p class="m-0 text-end">Reviewed</p>
-                        `;
-                        statusIndicatorContainer.appendChild(reviewedDiv);
-                    } else if (data.status === 'NotReady') {
-                        // Render Not Ready status with form
-                        const notReadyDiv = document.createElement('div');
-                        notReadyDiv.classList.add('d-flex', 'align-items-center');
-                        notReadyDiv.innerHTML = `
-                            <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                            <form id="statusForm" method="post" action="/Accounts/ChangeStatus">
-                                <input type="hidden" name="id" value="${data.dietId}">
-                                <select id="statusDropdown" name="newStatus">
-                                    <option value="NotReady" selected>Not ready for review</option>
-                                    <option value="PendingFeedback">Pending Feedback</option>
-                                </select>
-                            </form>
-                        `;
-                        statusIndicatorContainer.appendChild(notReadyDiv);
-                    } else if (data.status === 'PendingFeedback') {
-                        // Render Pending Feedback status with form
-                        const pendingFeedbackDiv = document.createElement('div');
-                        pendingFeedbackDiv.classList.add('d-flex', 'align-items-center');
-                        pendingFeedbackDiv.innerHTML = `
-                            <div class="bg-warning rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                            <form id="statusForm" method="post" action="/Accounts/ChangeStatus">
-                                <input type="hidden" name="id" value="${data.dietId}">
-                                <select id="statusDropdown" name="newStatus">
-                                    <option value="NotReady">Not ready for review</option>
-                                    <option value="PendingFeedback" selected>Pending Feedback</option>
-                                </select>
-                            </form>
-                        `;
-                        statusIndicatorContainer.appendChild(pendingFeedbackDiv);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching status indicator data:', error);
-                });
+        function dropdownSubmit() {
+            document.getElementById('statusForm').submit();
         }
 
+
+    function attachDropdownListeners() {
+    // Select all dynamically created dropdowns and add the change event listener
+    const dropdowns = document.querySelectorAll('.statusDropdown');
+
+    dropdowns.forEach(dropdown => {
+    dropdown.addEventListener('change', function () {
+    // Get the form element associated with this dropdown
+    const form = dropdown.closest('form');
+
+    // Submit the form
+    form.submit();
+    });
+    });
+    }
     </script>
     <div class="card-body">
         <link rel="stylesheet" href="~/css/table.css" />
